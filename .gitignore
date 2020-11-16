@@ -4,5 +4,8 @@ target
 *.iml
 log
 *.patch
+voting.h2.db
+voting.iml
+voting.trace.db
 
 
