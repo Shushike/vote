@@ -17,14 +17,21 @@ public interface CrudMenuRepository extends JpaRepository<Menu, Integer> {
     @Query("DELETE FROM Menu m WHERE m.id=:id")
     int delete(@Param("id") int id);
 
+    //если добавить rownum=1 будет ли один элемент в результате
+    @Query("SELECT m FROM Menu m WHERE m.restaurant.id=:restaurantId AND m.date=:menuDate")
+    List<Menu> getByDate(@Param("restaurantId") int restaurantId, @Param("menuDate") LocalDate menuDate);
+
     @Query("SELECT m FROM Menu m WHERE m.restaurant.id=:restaurantId ORDER BY m.date DESC")
-    List<Menu> getAllForRestaurant(@Param("restaurantId") int restaurantId);
+    List<Menu> getAllByRestaurant(@Param("restaurantId") int restaurantId);
 
     //выборка с блюдами
-    @Query("SELECT m FROM Menu m WHERE m.date=:menuDate")
-    List<Menu> getAllForDate(@Param("menuDate") LocalDate menuDate);
+    @Query("SELECT m FROM Menu m WHERE m.date=:menuDate ORDER BY m.restaurant.id")
+    List<Menu> getAllByDate(@Param("menuDate") LocalDate menuDate);
 
     //с голосованием и блюдами
     @Query("SELECT m FROM Menu m WHERE m.date >= :startDate AND m.date <= :endDate ORDER BY m.date DESC")
     List<Menu> getBetweenInclude(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT m FROM Menu m ORDER BY m.date DESC, m.id")
+    List<Menu> getAll();
 }

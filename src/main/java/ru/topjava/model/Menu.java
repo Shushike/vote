@@ -2,6 +2,7 @@ package ru.topjava.model;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -21,13 +22,15 @@ public class Menu extends AbstractBaseEntity {
     private Restaurant restaurant;
 
     @Column(name = "menudate", nullable = false)
-    @NotEmpty
+    @NotNull
     private LocalDate date;
 
+    /*
     @Column(name = "dish_list")
     @ElementCollection
-   // @CollectionTable(name = "dish", joinColumns = @JoinColumn(name = "id"))
-    private List<Integer> dishList;
+    @CollectionTable(name = "dish", joinColumns = @JoinColumn(name = "id"))
+    @Transient
+    private List<Integer> dishList;*/
     /*
         @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "COMPUTERS", joinColumns = @JoinColumn(name = "ID_IMAGE"))
@@ -45,12 +48,13 @@ public class Menu extends AbstractBaseEntity {
     public Menu(Integer id, LocalDate localDate, List<Integer> dishList, String description){
         super(id);
         this.date = localDate;
-        this.dishList = dishList;
+        //this.dishList = dishList;
         this.description = description;
     }
 
     public Menu(Menu menu){
-        this(menu.getId(), menu.getDate(), menu.getDishList(), menu.getDescription());
+        this(menu.getId(), menu.getDate(), null, //menu.getDishList(),
+                 menu.getDescription());
     }
 
     public LocalDate getDate(){
@@ -65,9 +69,9 @@ public class Menu extends AbstractBaseEntity {
         return description;
     }
 
-    public List<Integer> getDishList() {
+   /* public List<Integer> getDishList() {
         return dishList;
-    }
+    }*/
 
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
@@ -81,16 +85,16 @@ public class Menu extends AbstractBaseEntity {
         this.date = date;
     }
 
-    public void setDishList(List<Integer> dishList) {
+    /*public void setDishList(List<Integer> dishList) {
         this.dishList = dishList;
-    }
+    }*/
 
     @Override
     public String toString() {
-        return "Dish{" +
+        return "Menu{" +
                 "id=" + id +
                 ", date=" + date +
-                ", dishes=" + dishList +
+              //  ", dishes=" + dishList +
                 ", description=" + String.valueOf(description) +
                 '}';
     }

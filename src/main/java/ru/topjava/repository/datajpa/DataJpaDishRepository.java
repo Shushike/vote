@@ -43,6 +43,6 @@ public class DataJpaDishRepository implements DishRepository {
 
     @Override
     public List<Dish> getByName(int restaurantId, String name) {
-        return null;
+        return crudRepository.getByName(restaurantId, name) ;
     }
 }

@@ -21,7 +21,7 @@ public interface CrudRestaurantRepository  extends JpaRepository<Restaurant, Int
     List<Restaurant> getByAddress(@Param("address") String address);
 
     @EntityGraph(attributePaths = {"menus"})
-    @Query("SELECT DISTINCT r FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id) INNER JOIN Vote v on (v.menu.id=m.id) WHERE v.user.id=?1 ORDER BY r.name")
+    @Query("SELECT DISTINCT r FROM Restaurant r LEFT JOIN FETCH Menu m ON (m.restaurant.id=r.id) INNER JOIN Vote v on (v.menu.id=m.id) WHERE v.user.id=?1 ORDER BY r.name")
     List<Restaurant> getAllVoited(int userId);
 
     @Query("SELECT count(r) FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id) INNER JOIN Vote v on (v.menu.id=m.id) WHERE r.id=?1 AND m.date=?2")
