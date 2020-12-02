@@ -18,4 +18,9 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
 
     int getVoteCount(int restaurantId, LocalDate localDate);
 
+    Restaurant getWithMenu(int restaurantId);
+
+    Restaurant getWithDishes(int restaurantId);
+
+    Restaurant getWholeInfo(int restaurantId);
 }

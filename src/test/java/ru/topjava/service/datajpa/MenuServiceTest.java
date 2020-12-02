@@ -1,7 +1,6 @@
 package ru.topjava.service.datajpa;
 
 import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,8 @@ import ru.topjava.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
 import static ru.topjava.MenuTestData.*;
 import static ru.topjava.RestaurantTestData.RESTAURANT1_ID;
 
@@ -48,6 +48,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     public void get() {
         Menu actual = service.get(MENU1_ID);
         MENU_MATCHER.assertMatch(actual, menu1);
+        innerLog.debug("Actual menu: "+actual.toString());
     }
 
     @Test
@@ -71,6 +72,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     public void getByDate() {
         Menu found = service.getByDate(RESTAURANT1_ID, MENU_DATE1);
         MENU_MATCHER.assertMatch(found, menu1);
+        innerLog.debug("Found menu: "+found.toString());
     }
 
     @Test

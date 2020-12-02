@@ -30,7 +30,6 @@ public class Dish extends AbstractNamedDescriptedEntity {
         this.price = price;
     }
 
-
     public Dish(Dish dish) {
         this(dish.getId(), dish.getName(), dish.getPrice(), dish.getDescription());
     }

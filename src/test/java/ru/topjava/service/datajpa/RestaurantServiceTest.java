@@ -1,8 +1,6 @@
 package ru.topjava.service.datajpa;
 
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,8 @@ import ru.topjava.service.AbstractServiceTest;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
 import static ru.topjava.RestaurantTestData.*;
 import static ru.topjava.UserTestData.USER_ID;
 
@@ -60,6 +59,28 @@ public class RestaurantServiceTest extends AbstractServiceTest {
     public void get() {
         Restaurant actual = service.get(RESTAURANT1_ID);
         RESTAURANT_MATCHER.assertMatch(actual, restaurant1);
+        innerLog.debug("Actual restaurant: "+actual.toString());
+    }
+
+    @Test
+    public void getWithMenu() {
+        Restaurant actual = service.getWithMenu(RESTAURANT1_ID);
+        RESTAURANT_MATCHER.assertMatch(actual, restaurant1);
+        innerLog.debug("Actual restaurant: "+actual.toString());
+    }
+
+    @Test
+    public void getWithDishes() {
+        Restaurant actual = service.getWithDishes(RESTAURANT1_ID);
+        RESTAURANT_MATCHER.assertMatch(actual, restaurant1);
+        innerLog.debug("Actual restaurant: "+actual.toString());
+    }
+
+    @Test
+    public void getWholeInfo() {
+        Restaurant actual = service.getWholeInfo(RESTAURANT1_ID);
+        RESTAURANT_MATCHER.assertMatch(actual, restaurant1);
+        innerLog.debug("Actual restaurant: "+actual.toString());
     }
 
     @Test
@@ -100,13 +121,12 @@ public class RestaurantServiceTest extends AbstractServiceTest {
     public void getVoted() {
         List<Restaurant> allVoted = service.getAllVoted(USER_ID);
         //RESTAURANT_MATCHER.assertMatch(allVoted, List.of(restaurant1));
-        System.out.println(">>> "+allVoted.get(0).getMenus());
-        innerLog.warn("check request and list {}", allVoted);
+        innerLog.warn("Check request and list {}", allVoted);
     }
 
     @Test
     public void getVoteCount() {
-        Assert.assertEquals(service.getVoteCount(RESTAURANT1_ID, VOTE_DATE), 1);
+        Assertions.assertEquals(service.getVoteCount(RESTAURANT1_ID, VOTE_DATE), 1);
     }
 
    /* @Test

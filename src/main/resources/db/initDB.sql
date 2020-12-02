@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS user_role;
+DROP TABLE IF EXISTS menu_dish;
 DROP TABLE IF EXISTS vote;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS dish;
@@ -52,12 +53,20 @@ CREATE TABLE menu
 (
     id            BIGINT    DEFAULT nextval('global_seq'),
     restaurant_id BIGINT    NOT NULL,
-    menudate      DATE      NOT NULL,
-    dish_list     ARRAY     NULL,
+    menu_date      DATE      NOT NULL,
     description   TEXT      NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE,
-    CONSTRAINT menu_restaurant_date_idx UNIQUE (restaurant_id, menudate)
+    CONSTRAINT menu_restaurant_date_idx UNIQUE (restaurant_id, menu_date)
+);
+
+CREATE TABLE menu_dish
+(
+    menu_id BIGINT NOT NULL,
+    dish_id BIGINT NOT NULL,
+    PRIMARY KEY (menu_id, dish_id),
+    FOREIGN KEY (menu_id) REFERENCES menu (id) ON DELETE CASCADE,
+    FOREIGN KEY (dish_id) REFERENCES dish (id) ON DELETE CASCADE
 );
 
 CREATE TABLE vote

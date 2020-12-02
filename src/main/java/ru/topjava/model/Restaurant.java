@@ -1,9 +1,13 @@
 package ru.topjava.model;
 
+import org.hibernate.LazyInitializationException;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "restaurant")
@@ -15,39 +19,74 @@ public class Restaurant extends AbstractNamedDescriptedEntity {
     private String address;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
-    private List<Menu> menus;
+    private Set<Menu> menus;
 
-    public Restaurant(){
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    private Set<Dish> dishes;
+
+    public Restaurant() {
     }
 
-    public Restaurant(Integer id, String name, String address, String description){
+    public Restaurant(Integer id, String name, String address, String description) {
         super(id, name, description);
         this.address = address;
     }
 
-    public Restaurant(Restaurant restaurant){
+    public Restaurant(Restaurant restaurant) {
         this(restaurant.getId(), restaurant.getName(), restaurant.getAddress(), restaurant.getDescription());
     }
 
-    public String getAddress(){
+    public String getAddress() {
         return address;
     }
 
-    public List<Menu> getMenus() {
+    public Set<Menu> getMenus() {
         return menus;
     }
 
-    public void setAddress(String address){
+    public Set<Dish> getDishes() {
+        return dishes;
+    }
+
+    public boolean isMenusLoaded() {
+        try {
+            getMenus().isEmpty();
+        } catch (LazyInitializationException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isDishesLoaded() {
+        try {
+            getDishes().isEmpty();
+        } catch (LazyInitializationException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public void setAddress(String address) {
         this.address = address;
     }
 
     @Override
     public String toString() {
+        String subElementStart = "\n\t\t";
+        String listStart = "\n\t";
         return "Restaurant{" +
                 "id=" + id +
                 ", name=" + name +
                 ", address=" + address +
                 ", description=" + description +
+                (listStart + "Dishes: " + (isDishesLoaded() ?
+                        (getDishes().isEmpty()?"<empty>":
+                        subElementStart + dishes.stream().map(Dish::toString).collect(Collectors.joining("," + subElementStart))):
+                        "<was not loaded>")) +
+                (listStart + "Menus: " + (isMenusLoaded() ?
+                        (getMenus().isEmpty()?"<empty>":
+                        subElementStart + menus.stream().map(Menu::toString).collect(Collectors.joining("," + subElementStart))) :
+                        "<was not loaded>")) +
                 '}';
     }
 }

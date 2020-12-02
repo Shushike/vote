@@ -1,4 +1,5 @@
 DELETE FROM user_role;
+DELETE FROM menu_dish;
 DELETE FROM user;
 DELETE FROM restaurant;
 DELETE FROM dish;
@@ -13,7 +14,8 @@ VALUES ('User', 'user@yandex.ru', 'password'),
 INSERT INTO user_role (role, user_id)
 VALUES ('USER', 100000),
        ('ADMIN', 100001),
-       ('USER', 100002);
+       ('USER', 100002),
+       ('ADMIN', 100000);
 
 INSERT INTO restaurant (name, address, description)
 VALUES ('First', 'Long st. 50', 'Sea food'),
@@ -28,11 +30,22 @@ VALUES ('Fried fish', 4000, 100003, 'Fried sea fish slices'),
        ('Salad', 10000, 100004, 'Ingredients'),
        ('Bread', 600, 100004, null);
 
-INSERT INTO menu (menudate, restaurant_id, description, dish_list)
-VALUES (DATE '2020-11-04', 100003, 'Grand opening', ARRAY[100005, 100007]),
-       (DATE '2020-11-05', 100003, 'Thursday', ARRAY[100006, 100007]),
-       (DATE '2020-11-04', 100004, null, ARRAY[100008, 100009, 100010]),
-       (DATE '2020-11-05', 100004, 'Short day', ARRAY[100009, 100010]);
+INSERT INTO menu (menu_date, restaurant_id, description)
+VALUES (DATE '2020-11-04', 100003, 'Grand opening'),
+       (DATE '2020-11-05', 100003, 'Thursday'),
+       (DATE '2020-11-04', 100004, null),
+       (DATE '2020-11-05', 100004, 'Short day');
+
+INSERT INTO menu_dish (menu_id, dish_id)
+VALUES (100012, 100005),
+       (100012, 100007),
+       (100013, 100006),
+       (100013, 100007),
+       (100014, 100008),
+       (100014, 100009),
+       (100014, 100010),
+       (100015, 100009),
+       (100015, 100010);
 
 INSERT INTO vote (menu_id, user_id, date_time)
 VALUES (100012, 100000, TIMESTAMP '2020-11-04 09:34:18'),

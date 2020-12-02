@@ -1,5 +1,6 @@
 package ru.topjava.repository.datajpa;
 
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,24 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     @Override
     public List<Restaurant> getAllVoted(int userId) {
         return crudRepository.getAllVoited(userId);
+    }
+
+    @Override
+    public Restaurant getWithMenu(int restaurantId) {
+        List<Restaurant> list = crudRepository.getWithMenu(restaurantId);
+        return DataAccessUtils.singleResult(list);
+    }
+
+    @Override
+    public Restaurant getWithDishes(int restaurantId) {
+        List<Restaurant> list = crudRepository.getWithDishes(restaurantId);
+        return DataAccessUtils.singleResult(list);
+    }
+
+    @Override
+    public Restaurant getWholeInfo(int restaurantId) {
+        List<Restaurant> list = crudRepository.getWholeInfo(restaurantId);
+        return DataAccessUtils.singleResult(list);
     }
 
     @Override

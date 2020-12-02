@@ -1,5 +1,6 @@
 package ru.topjava.repository.datajpa;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,14 +19,13 @@ public interface CrudMenuRepository extends JpaRepository<Menu, Integer> {
     int delete(@Param("id") int id);
 
     //если добавить rownum=1 будет ли один элемент в результате
-    @Query("SELECT m FROM Menu m WHERE m.restaurant.id=:restaurantId AND m.date=:menuDate")
+    @Query("SELECT m FROM Menu m LEFT JOIN FETCH m.dish WHERE m.restaurant.id=:restaurantId AND m.date=:menuDate")
     List<Menu> getByDate(@Param("restaurantId") int restaurantId, @Param("menuDate") LocalDate menuDate);
 
     @Query("SELECT m FROM Menu m WHERE m.restaurant.id=:restaurantId ORDER BY m.date DESC")
     List<Menu> getAllByRestaurant(@Param("restaurantId") int restaurantId);
-
-    //выборка с блюдами
-    @Query("SELECT m FROM Menu m WHERE m.date=:menuDate ORDER BY m.restaurant.id")
+    
+    @Query("SELECT m FROM Menu m LEFT JOIN FETCH m.dish WHERE m.date=:menuDate ORDER BY m.restaurant.id")
     List<Menu> getAllByDate(@Param("menuDate") LocalDate menuDate);
 
     //с голосованием и блюдами

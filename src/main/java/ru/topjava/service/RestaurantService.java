@@ -16,6 +16,7 @@ import static ru.topjava.util.ValidationUtil.checkNotFoundWithId;
 public class RestaurantService extends RepositoryService<Restaurant> {
 
     private final RestaurantRepository restaurantRepository;
+
     public RestaurantService(RestaurantRepository repository) {
         super(repository);
         restaurantRepository = repository;
@@ -44,7 +45,19 @@ public class RestaurantService extends RepositoryService<Restaurant> {
         return restaurantRepository.getAllVoted(userId);
     }
 
-    public int getVoteCount(int restaurantId, LocalDate voteDate){
+    public Restaurant getWithMenu(int restaurantId) {
+        return restaurantRepository.getWithMenu(restaurantId);
+    }
+
+    public Restaurant getWithDishes(int restaurantId) {
+        return restaurantRepository.getWithDishes(restaurantId);
+    }
+
+    public Restaurant getWholeInfo(int restaurantId) {
+        return restaurantRepository.getWholeInfo(restaurantId);
+    }
+
+    public int getVoteCount(int restaurantId, LocalDate voteDate) {
         return restaurantRepository.getVoteCount(restaurantId, voteDate);
     }
 }

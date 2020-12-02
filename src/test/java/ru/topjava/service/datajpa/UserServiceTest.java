@@ -1,7 +1,6 @@
 package ru.topjava.service.datajpa;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -17,7 +16,8 @@ import ru.topjava.util.exception.NotFoundException;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
 import static ru.topjava.UserTestData.*;
 
 public class UserServiceTest extends AbstractServiceTest {
@@ -31,7 +31,7 @@ public class UserServiceTest extends AbstractServiceTest {
     @Autowired
     protected JpaUtil jpaUtil;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Cache usersCache = cacheManager.getCache("users");
         if (usersCache != null)
