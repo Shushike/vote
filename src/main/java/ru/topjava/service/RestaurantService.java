@@ -33,6 +33,8 @@ public class RestaurantService extends RepositoryService<Restaurant> {
         checkNotFoundWithId(restaurantRepository.save(restaurant), restaurant.id());
     }
 
+    public void delete(int id){ checkNotFoundWithId(restaurantRepository.delete(id), id);}
+
     public List<Restaurant> getAll() {
         return restaurantRepository.getAll();
     }

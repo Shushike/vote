@@ -18,5 +18,7 @@ public interface MenuRepository extends BaseRepository<Menu> {
 
     List<Menu> getAllByDate(LocalDate localDate);
 
+    List<Menu> getAllByRestaurant(int restaurantId);
+
     List<Menu> getBetweenInclude(LocalDate startDate, LocalDate endDate);
 }

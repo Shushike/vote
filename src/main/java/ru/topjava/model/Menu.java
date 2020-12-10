@@ -1,5 +1,7 @@
 package ru.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -31,6 +33,7 @@ public class Menu extends AbstractBaseEntity {
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
+    @JsonBackReference
     private Restaurant restaurant;
 
     @Column(name = "menu_date", nullable = false)
@@ -39,11 +42,22 @@ public class Menu extends AbstractBaseEntity {
 
     @CollectionTable(name = "menu_dish", joinColumns = @JoinColumn(name = "menu_id"))
     @ElementCollection(fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Dish> dish;
 
     @Size(min = 2, max = 120)
     @Column(name = "description", nullable = true)
     protected String description;
+
+    //@CollectionTable(name = "vote", joinColumns = @JoinColumn(name = "menu_id"))
+    /*@JoinColumns({
+            @JoinColumn(name = "vote_menu_id", referencedColumnName = "vote_menu_id", insertable = false, updatable = false)
+            ,
+            @JoinColumn(name = "vote_user_id", referencedColumnName = "vote_user_id", insertable = false, updatable = false)
+    })*/
+    @OneToMany(mappedBy = "menu", targetEntity = Vote.class)
+    @JsonManagedReference
+    private Set<Vote> vote;
 
     public Menu(){
     }
@@ -76,6 +90,14 @@ public class Menu extends AbstractBaseEntity {
         return dish;
     }
 
+    public Set<Vote> getVotes() {
+        return vote;
+    }
+
+    public void setVote(Set<Vote> votes) {
+        this.vote = CollectionUtils.isEmpty(votes) ? new HashSet<>() : Set.copyOf(votes);
+    }
+
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
     }
@@ -91,6 +113,15 @@ public class Menu extends AbstractBaseEntity {
     public void setDishes(Collection<Dish> dishes) {
         this.dish = CollectionUtils.isEmpty(dishes) ? new HashSet<>() : Set.copyOf(dishes);
     }
+
+/*    public boolean isVotesLoaded() {
+        try {
+            getVotes().isEmpty();
+        } catch (LazyInitializationException e) {
+            return false;
+        }
+        return true;
+    }*/
 
     public boolean isDishesLoaded() {
         try {
@@ -113,6 +144,10 @@ public class Menu extends AbstractBaseEntity {
                         (getDishes().isEmpty()?"<empty>":
                                 subElementStart + dish.stream().map(Dish::toString).collect(Collectors.joining("," + subElementStart))):
                         "<was not loaded>")) +
+              /*  (listStart + "Dishes: " + (isVotesLoaded() ?
+                        (getVotes().isEmpty()?"<empty>":
+                                subElementStart + vote.stream().map(Vote::toString).collect(Collectors.joining("," + subElementStart))):
+                        "<was not loaded>")) +*/
                 '}';
     }
 }

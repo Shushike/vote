@@ -56,6 +56,11 @@ public class DataJpaMenuRepository implements MenuRepository {
     }
 
     @Override
+    public List<Menu> getAllByRestaurant(int restaurantId) {
+        return crudRepository.getAllByRestaurant(restaurantId);
+    }
+
+    @Override
     public List<Menu> getAllByDate(LocalDate localDate) {
         return crudRepository.getAllByDate(localDate);
     }

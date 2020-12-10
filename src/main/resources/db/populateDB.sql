@@ -34,7 +34,8 @@ INSERT INTO menu (menu_date, restaurant_id, description)
 VALUES (DATE '2020-11-04', 100003, 'Grand opening'),
        (DATE '2020-11-05', 100003, 'Thursday'),
        (DATE '2020-11-04', 100004, null),
-       (DATE '2020-11-05', 100004, 'Short day');
+       (DATE '2020-11-05', 100004, 'Short day'),
+       (DATE '2021-12-05', 100004, 'After one year');
 
 INSERT INTO menu_dish (menu_id, dish_id)
 VALUES (100012, 100005),
@@ -50,4 +51,5 @@ VALUES (100012, 100005),
 INSERT INTO vote (menu_id, user_id, date_time)
 VALUES (100012, 100000, TIMESTAMP '2020-11-04 09:34:18'),
        (100014, 100002, TIMESTAMP '2020-11-04 08:00:02'),
-       (100013, 100000, TIMESTAMP '2020-11-04 10:00:00');
+       (100013, 100000, TIMESTAMP '2020-11-04 10:00:00'),
+       (100012, 100002, TIMESTAMP '2020-11-03 15:20:00');

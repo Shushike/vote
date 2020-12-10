@@ -1,5 +1,6 @@
 package ru.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.LazyInitializationException;
 
 import javax.persistence.*;
@@ -19,9 +20,11 @@ public class Restaurant extends AbstractNamedDescriptedEntity {
     private String address;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    @JsonManagedReference
     private Set<Menu> menus;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    @JsonManagedReference
     private Set<Dish> dishes;
 
     public Restaurant() {

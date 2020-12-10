@@ -82,6 +82,13 @@ public class MenuServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void getByRestaurant() {
+        List<Menu> found = service.getAllByRestaurant(RESTAURANT1_ID);
+        MENU_MATCHER.assertMatch(found, restaurant1_menus);
+        innerLog.debug("Found menus: "+found.toString());
+    }
+
+    @Test
     public void getAll() {
         List<Menu> found = service.getAll();
         MENU_MATCHER.assertMatch(found, menus);
@@ -89,7 +96,7 @@ public class MenuServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException(){
-        validateRootCause(() -> service.create(new Menu(null, menu1.getDate(), null/*menu1.getDishList()*/, null), RESTAURANT1_ID), IllegalArgumentException.class);
+        validateRootCause(() -> service.create(new Menu(null, menu1.getDate(), null/*menu1.getDishList()*/, null), RESTAURANT1_ID), JdbcSQLIntegrityConstraintViolationException.class);
         validateRootCause(() -> service.create(new Menu(null, LocalDate.now(), null/*menu1.getDishList()*/, null), NOT_FOUND), JdbcSQLIntegrityConstraintViolationException.class);
     }
 }

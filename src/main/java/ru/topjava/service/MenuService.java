@@ -1,6 +1,7 @@
 package ru.topjava.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.topjava.model.Menu;
 import ru.topjava.repository.MenuRepository;
@@ -27,9 +28,13 @@ public class MenuService extends RepositoryService<Menu> {
     }
 
     public void update(Menu menu, int restaurantId) {
+        //убрать restaurantId?
+        //обновлять и создавать объекты может только администратор!
         Assert.notNull(menu, "Menu must not be null");
         checkNotFoundWithId(menuRepository.save(menu, restaurantId), menu.id());
     }
+
+    public void delete(int id){ checkNotFoundWithId(menuRepository.delete(id), id);}
 
     public List<Menu> getAll(int restaurantId) {
         return menuRepository.getAll(restaurantId);
@@ -41,6 +46,10 @@ public class MenuService extends RepositoryService<Menu> {
 
     public Menu getByDate(int restaurantId, LocalDate localDate) {
         return menuRepository.getByDate(restaurantId, localDate);
+    }
+
+    public List<Menu> getAllByRestaurant(int restaurantId) {
+        return menuRepository.getAllByRestaurant(restaurantId);
     }
 
     public List<Menu> getAll() {

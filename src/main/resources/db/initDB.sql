@@ -23,7 +23,7 @@ CREATE TABLE user
 
 CREATE TABLE user_role
 (
-    user_id BIGINT NOT NULL,
+    user_id BIGINT  NOT NULL,
     role    VARCHAR,
     PRIMARY KEY (user_id, role),
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
@@ -31,30 +31,30 @@ CREATE TABLE user_role
 
 CREATE TABLE restaurant
 (
-    id          BIGINT    DEFAULT nextval('global_seq'),
-    address     VARCHAR   NOT NULL,
-    name        VARCHAR   NOT NULL,
-    description TEXT      NULL,
+    id          BIGINT   DEFAULT nextval('global_seq'),
+    address     VARCHAR  NOT NULL,
+    name        VARCHAR  NOT NULL,
+    description TEXT     NULL,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE dish
 (
-    id            BIGINT    DEFAULT nextval('global_seq'),
-    restaurant_id BIGINT    NOT NULL,
-    price         INTEGER   NOT NULL,
-    name          VARCHAR   NOT NULL,
-    description   TEXT      NULL,
+    id            BIGINT   DEFAULT nextval('global_seq'),
+    restaurant_id BIGINT   NOT NULL,
+    price         INTEGER  NOT NULL,
+    name          VARCHAR  NOT NULL,
+    description   TEXT     NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE
 );
 
 CREATE TABLE menu
 (
-    id            BIGINT    DEFAULT nextval('global_seq'),
-    restaurant_id BIGINT    NOT NULL,
-    menu_date      DATE      NOT NULL,
-    description   TEXT      NULL,
+    id            BIGINT  DEFAULT nextval('global_seq'),
+    restaurant_id BIGINT  NOT NULL,
+    menu_date     DATE    NOT NULL,
+    description   TEXT    NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE,
     CONSTRAINT menu_restaurant_date_idx UNIQUE (restaurant_id, menu_date)
@@ -62,8 +62,8 @@ CREATE TABLE menu
 
 CREATE TABLE menu_dish
 (
-    menu_id BIGINT NOT NULL,
-    dish_id BIGINT NOT NULL,
+    menu_id BIGINT  NOT NULL,
+    dish_id BIGINT  NOT NULL,
     PRIMARY KEY (menu_id, dish_id),
     FOREIGN KEY (menu_id) REFERENCES menu (id) ON DELETE CASCADE,
     FOREIGN KEY (dish_id) REFERENCES dish (id) ON DELETE CASCADE
@@ -71,10 +71,12 @@ CREATE TABLE menu_dish
 
 CREATE TABLE vote
 (
-    user_id BIGINT NOT NULL,
-    menu_id BIGINT NOT NULL,
-    date_time TIMESTAMP NOT NULL,
-    PRIMARY KEY (user_id, menu_id),
+    id      BIGINT       DEFAULT nextval('global_seq'),
+    user_id BIGINT       NOT NULL,
+    menu_id BIGINT       NOT NULL,
+    date_time TIMESTAMP  NOT NULL,
+    PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
-    FOREIGN KEY (menu_id) REFERENCES menu (id) ON DELETE CASCADE
+    FOREIGN KEY (menu_id) REFERENCES menu (id) ON DELETE CASCADE,
+    CONSTRAINT vote_unique_menu_user_idx UNIQUE (menu_id, user_id)
 );
