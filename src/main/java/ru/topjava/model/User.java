@@ -49,6 +49,8 @@ public class User extends AbstractNamedEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
+    //todo: votes
+
     public User() {
     }
 

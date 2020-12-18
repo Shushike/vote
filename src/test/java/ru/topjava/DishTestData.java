@@ -10,9 +10,9 @@ public class DishTestData {
     public static TestMatcher<Dish> DISH_MATCHER = TestMatcher.usingIgnoringFieldsComparator("restaurant");
 
     public static final int NOT_FOUND = 10;
-    public static final int DISH1_ID = START_SEQ + 6;
-    public static final int DISH2_ID = START_SEQ + 7;
-    public static final int DISH3_ID = START_SEQ + 8;
+    public static final int DISH1_ID = START_SEQ + 5;
+    public static final int DISH2_ID = START_SEQ + 6;
+    public static final int DISH3_ID = START_SEQ + 7;
    /* public static final int DISH4_ID = START_SEQ + 8;
     public static final int DISH5_ID = START_SEQ + 9;
     public static final int DISH6_ID = START_SEQ + 10;

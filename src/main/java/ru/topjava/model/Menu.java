@@ -59,22 +59,22 @@ public class Menu extends AbstractBaseEntity {
     @JsonManagedReference
     private Set<Vote> vote;
 
-    public Menu(){
+    public Menu() {
     }
 
-    public Menu(Integer id, LocalDate localDate, Collection<Dish> dishes, String description){
+    public Menu(Integer id, LocalDate localDate, Collection<Dish> dishes, String description) {
         super(id);
         this.date = localDate;
         this.description = description;
         setDishes(dishes);
     }
 
-    public Menu(Menu menu){
+    public Menu(Menu menu) {
         this(menu.getId(), menu.getDate(), menu.getDishes(),
-                 menu.getDescription());
+                menu.getDescription());
     }
 
-    public LocalDate getDate(){
+    public LocalDate getDate() {
         return date;
     }
 
@@ -114,14 +114,15 @@ public class Menu extends AbstractBaseEntity {
         this.dish = CollectionUtils.isEmpty(dishes) ? new HashSet<>() : Set.copyOf(dishes);
     }
 
-/*    public boolean isVotesLoaded() {
+    public boolean isVotesLoaded() {
         try {
-            getVotes().isEmpty();
+            if (getVotes() != null)
+                getVotes().isEmpty();
         } catch (LazyInitializationException e) {
             return false;
         }
-        return true;
-    }*/
+        return getVotes() != null;
+    }
 
     public boolean isDishesLoaded() {
         try {
@@ -141,13 +142,13 @@ public class Menu extends AbstractBaseEntity {
                 ", date=" + date +
                 ", description=" + String.valueOf(description) +
                 (listStart + "Dishes: " + (isDishesLoaded() ?
-                        (getDishes().isEmpty()?"<empty>":
-                                subElementStart + dish.stream().map(Dish::toString).collect(Collectors.joining("," + subElementStart))):
-                        "<was not loaded>")) +
-              /*  (listStart + "Dishes: " + (isVotesLoaded() ?
-                        (getVotes().isEmpty()?"<empty>":
-                                subElementStart + vote.stream().map(Vote::toString).collect(Collectors.joining("," + subElementStart))):
-                        "<was not loaded>")) +*/
+                        (getDishes().isEmpty() ? EMPTY :
+                                subElementStart + dish.stream().map(Dish::toString).collect(Collectors.joining("," + subElementStart))) :
+                        WAS_NOT_LOADED)) +
+                (listStart + "Votes: " + (isVotesLoaded() ?
+                        (getVotes().isEmpty() ? EMPTY :
+                                subElementStart + vote.stream().map(Vote::toString).collect(Collectors.joining("," + subElementStart))) :
+                        WAS_NOT_LOADED)) +
                 '}';
     }
 }

@@ -69,7 +69,7 @@ public class UserServiceTest extends AbstractServiceTest {
     @Test
     public void get() {
         User user = service.get(USER_ID);
-        USER_MATCHER.assertMatch(user, UserTestData.user);
+        USER_MATCHER.assertMatch(user, UserTestData.user1);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class UserServiceTest extends AbstractServiceTest {
     public void getAll() {
         List<User> all = service.getAll();
         //order of users is important for matching
-        USER_MATCHER.assertMatch(all, admin, user2, user);
+        USER_MATCHER.assertMatch(all, admin, user2, user1);
     }
 
     @Test

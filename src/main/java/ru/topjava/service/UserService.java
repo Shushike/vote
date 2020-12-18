@@ -16,6 +16,7 @@ import static ru.topjava.util.ValidationUtil.checkNotFoundWithId;
 public class UserService {
 
     private final UserRepository repository;
+    private String NOT_NULL_MSG = "User must not be null";
 
     public UserService(UserRepository repository) {
         this.repository = repository;
@@ -23,7 +24,7 @@ public class UserService {
 
     @CacheEvict(value = "users", allEntries = true)
     public User create(User user) {
-        Assert.notNull(user, "user must not be null");
+        Assert.notNull(user, NOT_NULL_MSG);
         return repository.save(user);
     }
 
@@ -38,7 +39,7 @@ public class UserService {
 
     public User getByEmail(String email) {
         Assert.notNull(email, "email must not be null");
-        return checkNotFound(repository.getByEmail(email), "email=" + email);
+        return checkNotFound(repository.getByEmail(email), "Failed to find user by email=" + email);
     }
 
     @Cacheable("users")
@@ -48,7 +49,7 @@ public class UserService {
 
     @CacheEvict(value = "users", allEntries = true)
     public void update(User user) {
-        Assert.notNull(user, "user must not be null");
+        Assert.notNull(user, NOT_NULL_MSG);
         checkNotFoundWithId(repository.save(user), user.id());
     }
 }

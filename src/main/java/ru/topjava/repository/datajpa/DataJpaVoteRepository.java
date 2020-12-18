@@ -1,15 +1,24 @@
 package ru.topjava.repository.datajpa;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.topjava.model.Menu;
+import ru.topjava.model.User;
 import ru.topjava.model.Vote;
 import ru.topjava.repository.VoteRepository;
+import ru.topjava.service.VoteService;
+import ru.topjava.util.ValidationUtil;
+import ru.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public class DataJpaVoteRepository implements VoteRepository {
+    private static final Logger innerLog = LoggerFactory.getLogger(DataJpaVoteRepository.class);
 
     private final CrudVoteRepository crudRepository;
     private final CrudMenuRepository menuRepository;
@@ -24,17 +33,28 @@ public class DataJpaVoteRepository implements VoteRepository {
     @Override
     @Transactional
     public Vote save(Vote vote, int menuId, int userId) {
-        vote.setMenu(menuRepository.getOne(menuId));
-        vote.setUser(userRepository.getOne(userId));
-        //должно быть get для проверки, что этот объект есть в бд, если это update
-
+        //check is this vote of user
+        if (!vote.isNew() &&
+                getById(vote.id(), userId) == null) {
+            innerLog.debug("{} can not be update", vote);
+            return null;
+        }
+        //??если поменялось меню, то оно может быть за другой день для этого пользователя
+        final Menu menu = menuRepository.findEntityById(menuId);
+        crudRepository.deleteForUserByDate(userId, menu.getDate(), vote.getId());
+        vote.setMenu(menu);
+        vote.setUser(userRepository.findEntityById(userId));
         return crudRepository.save(vote);
     }
 
     @Override
     @Transactional
-    public Vote create(int menuId, int userId) {
-        Vote newVote = new Vote(menuRepository.getOne(menuId), userRepository.getOne(userId));
+    public Vote create(int menuId, int userId) throws NotFoundException {
+        Menu menu = menuRepository.findEntityById(menuId);
+        Vote newVote = new Vote(menu, userRepository.findEntityById(userId));
+        innerLog.debug("{} list for delete", crudRepository.check(menuId, userId));
+        //crudRepository.deleteForUserByDate(menuId, userId);
+        crudRepository.deleteForUserByDate(userId, menu.getDate(), null);
         return crudRepository.save(newVote);
     }
 
@@ -51,13 +71,22 @@ public class DataJpaVoteRepository implements VoteRepository {
     }
 
     @Override
-    public Vote get(int id) {
-        return crudRepository.findById(id).orElse(null);
+    public Vote getById(int id, int userId) {
+        return crudRepository.findById(id)
+                .filter(vote -> vote.getUser().getId() == userId)
+                .orElse(null);
     }
 
     @Override
     public Vote get(int menuId, int userId) {
         return crudRepository.get(menuId, userId);
+    }
+
+    @Override
+    public Vote getByDate(int userId, LocalDate menuDate) {
+        if (menuDate == null)
+            return null;
+        return crudRepository.getForUserByDate(userId, menuDate);
     }
 
     @Override

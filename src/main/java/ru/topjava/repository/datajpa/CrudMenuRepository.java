@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.topjava.model.Menu;
+import ru.topjava.util.ValidationUtil;
+import ru.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,4 +37,8 @@ public interface CrudMenuRepository extends JpaRepository<Menu, Integer> {
 
     @Query("SELECT m FROM Menu m ORDER BY m.date DESC, m.id")
     List<Menu> getAll();
+
+    default Menu findEntityById(int menuId) throws NotFoundException {
+        return ValidationUtil.checkNotFoundWithId(this.findById(menuId).orElse(null), "menu", menuId);
+    }
 }

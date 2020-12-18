@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.topjava.model.User;
+import ru.topjava.util.ValidationUtil;
+import ru.topjava.util.exception.NotFoundException;
 
 @Transactional(readOnly = true)
 public interface CrudUserRepository extends JpaRepository<User, Integer> {
@@ -20,5 +22,9 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
     @EntityGraph(attributePaths = {"roles"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT u FROM User u WHERE u.id=?1")
     User getWithRoles(int id);
+
+    default User findEntityById(int userId) throws NotFoundException {
+        return ValidationUtil.checkNotFoundWithId(this.findById(userId).orElse(null), "user", userId);
+    }
 }
 

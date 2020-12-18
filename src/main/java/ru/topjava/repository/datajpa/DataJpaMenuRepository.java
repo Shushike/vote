@@ -6,6 +6,7 @@ import ru.topjava.model.Dish;
 import ru.topjava.model.Menu;
 import ru.topjava.repository.DishRepository;
 import ru.topjava.repository.MenuRepository;
+import ru.topjava.util.ValidationUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +25,7 @@ public class DataJpaMenuRepository implements MenuRepository {
     @Override
     @Transactional
     public Menu save(Menu menu, int restaurantId) {
-        menu.setRestaurant(restaurantRepository.getOne(restaurantId));
+        menu.setRestaurant(restaurantRepository.findEntityById(restaurantId));
         return crudRepository.save(menu);
     }
 

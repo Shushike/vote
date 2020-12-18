@@ -1,6 +1,7 @@
 package ru.topjava.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -18,21 +19,20 @@ import java.util.stream.Collectors;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "vote", uniqueConstraints = {@UniqueConstraint(columnNames = {"menu_id", "user_id"}, name = "vote_unique_menu_user_idx")})
-public class Vote extends AbstractBaseEntity{
+public class Vote extends AbstractBaseEntity {
 
     public static final String BY_MENU = "Voice.getForMenu";
     public static final String BY_USER = "Voice.getForUser";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false)
-    @MapsId("menu_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @JsonBackReference
     private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @JsonBackReference
@@ -43,17 +43,25 @@ public class Vote extends AbstractBaseEntity{
     private LocalDateTime voteTime;
 
     public Vote() {
-    }
-
-    public Vote(Menu menu, User user) {
-        this.menu = menu;
-        this.user = user;
         voteTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 
+    public Vote(Menu menu, User user) {
+        this();
+        setMenu(menu);
+        setUser(user);
+    }
+
     public Vote(Menu menu, User user, LocalDateTime localDateTime) {
-        this.menu = menu;
-        this.user = user;
+        setMenu(menu);
+        setUser(user);
+        voteTime = localDateTime;
+    }
+
+    public Vote(Integer id, Menu menu, User user, LocalDateTime localDateTime) {
+        super(id);
+        setMenu(menu);
+        setUser(user);
         voteTime = localDateTime;
     }
 
@@ -85,12 +93,34 @@ public class Vote extends AbstractBaseEntity{
         this.voteTime = voteTime;
     }
 
+    public boolean isUserLoaded() {
+        try {
+            if (getUser() != null)
+                getUser().getId();
+        } catch (LazyInitializationException e) {
+            return false;
+        }
+        return getUser() != null;
+    }
+
+    public boolean isMenuLoaded() {
+        try {
+            if (getMenu() != null)
+                getMenu().getId();
+        } catch (LazyInitializationException e) {
+            return false;
+        }
+        return getMenu() != null;
+    }
+
+
     @Override
     public String toString() {
-        String subElementStart = "\n\t\t";
-        String listStart = "\n\t";
         return "Vote{" +
-                "vote time = " + getVoteTime() +
+                "id = " + id +
+                ", vote time = " + getVoteTime() +
+                ", user = " + (isUserLoaded() ? getUser().getId() : WAS_NOT_LOADED) +
+                ", menu = " + (isMenuLoaded() ? getMenu().getId() : WAS_NOT_LOADED) +
                 '}';
     }
 }

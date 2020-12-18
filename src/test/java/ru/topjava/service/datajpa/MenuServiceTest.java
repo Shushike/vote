@@ -7,13 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.topjava.model.Menu;
 import ru.topjava.service.AbstractServiceTest;
 import ru.topjava.service.MenuService;
+import ru.topjava.util.exception.ModifyForrbidenException;
 import ru.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
+
 import static ru.topjava.MenuTestData.*;
 import static ru.topjava.RestaurantTestData.RESTAURANT1_ID;
 
@@ -37,6 +40,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     @Test
     public void create() {
         Menu created = service.create(getNew(), RESTAURANT1_ID);
+        innerLog.debug("{} created", created);
         int newId = created.id();
         Menu newMenu = getNew();
         newMenu.setId(newId);
@@ -48,7 +52,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     public void get() {
         Menu actual = service.get(MENU1_ID);
         MENU_MATCHER.assertMatch(actual, menu1);
-        innerLog.debug("Actual menu: "+actual.toString());
+        innerLog.debug("Actual menu: " + actual.toString());
     }
 
     @Test
@@ -58,9 +62,15 @@ public class MenuServiceTest extends AbstractServiceTest {
 
     @Test
     public void update() {
-        Menu updated = getUpdated();
+        Menu updated = getCanUpdated();
         service.update(updated, RESTAURANT1_ID);
-        MENU_MATCHER.assertMatch(service.get(MENU1_ID), getUpdated());
+        MENU_MATCHER.assertMatch(service.get(MENU4_ID), getCanUpdated());
+    }
+
+    @Test
+    public void invalidUpdate() {
+        Menu updated = getCannotUpdated();
+        assertThrows(ModifyForrbidenException.class, () -> service.update(updated, RESTAURANT1_ID));
     }
 
     @Test
@@ -72,7 +82,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     public void getByDate() {
         Menu found = service.getByDate(RESTAURANT1_ID, MENU_DATE1);
         MENU_MATCHER.assertMatch(found, menu1);
-        innerLog.debug("Found menu: "+found.toString());
+        innerLog.debug("Found menu: " + found.toString());
     }
 
     @Test
@@ -85,7 +95,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     public void getByRestaurant() {
         List<Menu> found = service.getAllByRestaurant(RESTAURANT1_ID);
         MENU_MATCHER.assertMatch(found, restaurant1_menus);
-        innerLog.debug("Found menus: "+found.toString());
+        innerLog.debug("Found menus: " + found.toString());
     }
 
     @Test
@@ -95,8 +105,8 @@ public class MenuServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void createWithException(){
+    public void createWithException() {
         validateRootCause(() -> service.create(new Menu(null, menu1.getDate(), null/*menu1.getDishList()*/, null), RESTAURANT1_ID), JdbcSQLIntegrityConstraintViolationException.class);
-        validateRootCause(() -> service.create(new Menu(null, LocalDate.now(), null/*menu1.getDishList()*/, null), NOT_FOUND), JdbcSQLIntegrityConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Menu(null, LocalDate.now(), null/*menu1.getDishList()*/, null), NOT_FOUND), NotFoundException.class);
     }
 }

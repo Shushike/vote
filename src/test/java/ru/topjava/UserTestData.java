@@ -16,7 +16,7 @@ public class UserTestData {
     public static final int USER2_ID = START_SEQ + 2;
     public static final int NOT_FOUND = 10;
 
-    public static final User user = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
+    public static final User user1 = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
     public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN);
     public static final User user2 = new User(USER2_ID, "Simple User", "user@yahoo.com", "password", Role.USER);
 
@@ -25,7 +25,7 @@ public class UserTestData {
     }
 
     public static User getUpdated() {
-        User updated = new User(user);
+        User updated = new User(user1);
         updated.setEmail("update@gmail.com");
         updated.setName("UpdatedName");
         updated.setPassword("newPass");

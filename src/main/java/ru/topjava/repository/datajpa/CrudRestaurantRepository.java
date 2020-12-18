@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.topjava.model.Restaurant;
+import ru.topjava.util.ValidationUtil;
+import ru.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,4 +40,8 @@ public interface CrudRestaurantRepository  extends JpaRepository<Restaurant, Int
 
     @Query("SELECT count(r) FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id) INNER JOIN Vote v on (v.menu.id=m.id) WHERE r.id=?1 AND m.date=?2")
     int getVoteCount(int restaurantId, LocalDate localDate);
+
+    default Restaurant findEntityById(int restaurantId) throws NotFoundException {
+        return ValidationUtil.checkNotFoundWithId(this.findById(restaurantId).orElse(null), "restaurant", restaurantId);
+    }
 }

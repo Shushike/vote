@@ -75,7 +75,7 @@ public class DishServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException(){
-        validateRootCause(() -> service.create(new Dish(null, dish1.getName(), 100, null), NOT_FOUND), JdbcSQLIntegrityConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Dish(null, dish1.getName(), 100, null), NOT_FOUND), NotFoundException.class);
         validateRootCause(() -> service.create(new Dish(dish1.getId(), dish1.getName(), 100, null), RESTAURANT1_ID), IllegalArgumentException.class);
     }
 }

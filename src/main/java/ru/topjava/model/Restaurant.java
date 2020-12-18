@@ -83,13 +83,13 @@ public class Restaurant extends AbstractNamedDescriptedEntity {
                 ", address=" + address +
                 ", description=" + description +
                 (listStart + "Dishes: " + (isDishesLoaded() ?
-                        (getDishes().isEmpty()?"<empty>":
+                        (getDishes().isEmpty()? EMPTY:
                         subElementStart + dishes.stream().map(Dish::toString).collect(Collectors.joining("," + subElementStart))):
-                        "<was not loaded>")) +
+                        WAS_NOT_LOADED)) +
                 (listStart + "Menus: " + (isMenusLoaded() ?
-                        (getMenus().isEmpty()?"<empty>":
+                        (getMenus().isEmpty()? EMPTY:
                         subElementStart + menus.stream().map(Menu::toString).collect(Collectors.joining("," + subElementStart))) :
-                        "<was not loaded>")) +
+                        WAS_NOT_LOADED)) +
                 '}';
     }
 }

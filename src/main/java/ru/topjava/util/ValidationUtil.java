@@ -14,7 +14,16 @@ public class ValidationUtil {
     }
 
     public static void checkNotFoundWithId(boolean found, int id) {
-        checkNotFound(found, "id=" + id);
+        checkNotFound(found, "ID=" + id);
+    }
+
+    public static <T> T checkNotFoundWithId(T object, String msg,  int id) {
+        checkNotFoundWithId(object != null, msg, id);
+        return object;
+    }
+
+    public static void checkNotFoundWithId(boolean found, String msg, int id) {
+        checkNotFound(found, "Failed to find "+msg+" with ID=" + id);
     }
 
     public static <T> T checkNotFound(T object, String msg) {
@@ -24,17 +33,17 @@ public class ValidationUtil {
 
     public static void checkNotFound(boolean found, String msg) {
         if (!found) {
-            throw new NotFoundException("Not found entity with " + msg);
+            throw new NotFoundException(msg);
         }
     }
 
     public static void checkNew(AbstractBaseEntity entity) {
         if (!entity.isNew()) {
-            throw new IllegalArgumentException(entity + " must be new (id=null)");
+            throw new IllegalArgumentException(entity + " must be new (ID=null)");
         }
     }
 
-    public static void checkRights(boolean hasRights){
+    public static void checkRights(boolean hasRights) {
         if (!hasRights)
             throw new InsufficientRightsException();
     }
@@ -44,7 +53,7 @@ public class ValidationUtil {
         if (entity.isNew()) {
             entity.setId(id);
         } else if (entity.id() != id) {
-            throw new IllegalArgumentException(entity + " must be with id=" + id);
+            throw new IllegalArgumentException(entity + " must be with ID=" + id);
         }
     }
 

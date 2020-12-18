@@ -1,6 +1,5 @@
 package ru.topjava.repository;
 
-import ru.topjava.model.Dish;
 import ru.topjava.model.Menu;
 
 import java.time.LocalDate;
@@ -12,10 +11,22 @@ public interface MenuRepository extends BaseRepository<Menu> {
 
     List<Menu> getAll(int restaurantId);
 
+    /**
+     * Return menu list for all restaurants without dishes and restaurant.
+     * Ordered by descending menu date and ascending ID
+     */
     List<Menu> getAll();
-    // null if not found
+
+    /**
+     * Return menu with dish list for date and restaurant.
+     * Null if not found
+     */
     Menu getByDate(int restaurantId, LocalDate localDate);
 
+    /**
+     * Return list of menu with dishes for date all restaurant.
+     * Ordered by restaurant ID
+     */
     List<Menu> getAllByDate(LocalDate localDate);
 
     List<Menu> getAllByRestaurant(int restaurantId);
