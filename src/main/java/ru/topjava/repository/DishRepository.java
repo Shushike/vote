@@ -3,6 +3,7 @@ package ru.topjava.repository;
 import ru.topjava.model.Dish;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DishRepository extends BaseRepository<Dish> {
     // null if not found, when updated
@@ -15,4 +16,6 @@ public interface DishRepository extends BaseRepository<Dish> {
     Dish get(int id, int restaurantId);
 
     boolean delete(int id, int restaurantId);
+
+    List<Dish> filter(Set<Dish> dishes, int restaurantId);
 }

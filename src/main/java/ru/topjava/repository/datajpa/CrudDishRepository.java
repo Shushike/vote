@@ -29,4 +29,7 @@ public interface CrudDishRepository extends JpaRepository<Dish, Integer> {
 
     @Query("SELECT d FROM Dish d WHERE d.restaurant.id=:restaurantId AND d.id=:id")
     Dish get(@Param("id") int id, @Param("restaurantId") int restaurantId);
+
+    @Query("SELECT d FROM Dish d WHERE d.restaurant.id=:restaurantId AND d.id in :id")
+    List<Dish> filter(@Param("id") List<Integer> id, @Param("restaurantId") int restaurantId);
 }

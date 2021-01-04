@@ -1,5 +1,7 @@
 package ru.topjava.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -20,6 +22,7 @@ import static ru.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class MenuService extends RepositoryService<Menu> {
+    private static final Logger innerLog = LoggerFactory.getLogger(MenuService.class);
 
     private final MenuRepository menuRepository;
     private final VoteRepository voteRepository;
@@ -38,10 +41,14 @@ public class MenuService extends RepositoryService<Menu> {
 
     public Menu update(Menu menu, int restaurantId) {
         Assert.notNull(menu, "Menu must not be null");
-        //если изменилась дата и уже есть голоса за меню, то запретить измения даты
-        List<Vote> menuVotes = voteRepository.getAllForMenu(menu.id());
-        if (menuVotes != null && !menuVotes.isEmpty())
-            throw new ModifyForbiddenException(String.format("Menu #%s on date %s already has votes", menu.id(), menu.getDate()));
+        LocalDate oldDate = menuRepository.get(menu.getId()).getDate();
+        //if menu date is changing and this menu already has votes, menu modifying is forbidden
+        if (oldDate!=null && !oldDate.equals(menu.getDate())) {
+            innerLog.debug("Menu date is changing (old value {}, new value {}), check votes", oldDate, menu.getDate());
+            List<Vote> menuVotes = voteRepository.getAllForMenu(menu.id());
+            if (menuVotes != null && !menuVotes.isEmpty())
+                throw new ModifyForbiddenException(String.format("Menu #%s on date %s already has votes", menu.id(), menu.getDate()));
+        }
         return checkNotFoundWithId(menuRepository.save(menu, restaurantId), menu.id());
     }
 

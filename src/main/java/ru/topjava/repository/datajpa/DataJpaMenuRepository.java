@@ -1,26 +1,24 @@
 package ru.topjava.repository.datajpa;
 
-import io.swagger.models.auth.In;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.topjava.model.Dish;
 import ru.topjava.model.Menu;
 import ru.topjava.repository.DishRepository;
 import ru.topjava.repository.MenuRepository;
-import ru.topjava.util.ValidationUtil;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class DataJpaMenuRepository implements MenuRepository {
 
     private final CrudMenuRepository crudRepository;
     private final CrudRestaurantRepository restaurantRepository;
+    private final DishRepository dishRepository;
 
-    public DataJpaMenuRepository(CrudMenuRepository crudRepository, CrudRestaurantRepository restaurantRepository) {
+    public DataJpaMenuRepository(CrudMenuRepository crudRepository, CrudRestaurantRepository restaurantRepository, DishRepository dishRepository) {
         this.crudRepository = crudRepository;
+        this.dishRepository = dishRepository;
         this.restaurantRepository = restaurantRepository;
     }
 
@@ -28,7 +26,7 @@ public class DataJpaMenuRepository implements MenuRepository {
     @Transactional
     public Menu save(Menu menu, int restaurantId) {
         menu.setRestaurant(restaurantRepository.findEntityById(restaurantId));
-        //todo: фильтровать dish по принадлежности к ресторану
+        menu.setDishes(dishRepository.filter(menu.getDishes(), restaurantId));
         return crudRepository.save(menu);
     }
 

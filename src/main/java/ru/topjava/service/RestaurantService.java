@@ -1,5 +1,8 @@
 package ru.topjava.service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -23,21 +26,25 @@ public class RestaurantService extends RepositoryService<Restaurant> {
         restaurantRepository = repository;
     }
 
+    @CachePut(value = "restaurants")
     public Restaurant create(Restaurant restaurant) {
         Assert.notNull(restaurant, "Restaurant must not be null");
         checkNew(restaurant);
         return restaurantRepository.save(restaurant);
     }
 
+    @CacheEvict(value = "restaurants")
     public void update(Restaurant restaurant) {
         Assert.notNull(restaurant, "Restaurant must not be null");
         checkNotFoundWithId(restaurantRepository.save(restaurant), restaurant.id());
     }
 
+    @CacheEvict(value = "restaurants")
     public boolean delete(int id) {
         return checkNotFoundWithId(restaurantRepository.delete(id), id);
     }
 
+    @Cacheable("restaurants")
     public List<Restaurant> getAll() {
         return restaurantRepository.getAll();
     }

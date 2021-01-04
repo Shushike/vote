@@ -14,7 +14,6 @@ import static ru.topjava.util.ValidationUtil.getRootCause;
         "classpath:spring/spring-db.xml"
 })
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@ExtendWith(TimingExtension.class)
 public abstract class AbstractServiceTest {
 
     protected <T extends Throwable> void validateRootCause(Runnable runnable, Class<T> rootExceptionClass) {

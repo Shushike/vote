@@ -1,7 +1,6 @@
 package ru.topjava;
 
 import ru.topjava.model.Dish;
-import java.time.LocalDate;
 import java.util.List;
 
 import static ru.topjava.model.AbstractBaseEntity.START_SEQ;
@@ -14,9 +13,6 @@ public class DishTestData {
     public static final int DISH2_ID = START_SEQ + 6;
     public static final int DISH3_ID = START_SEQ + 7;
     public static final int DISH4_ID = START_SEQ + 8;
-   /* public static final int DISH5_ID = START_SEQ + 9;
-    public static final int DISH6_ID = START_SEQ + 10;
-    public static final int DISH7_ID = START_SEQ + 11;*/
 
     public static final String DISH3_NAME = "Bread";
 

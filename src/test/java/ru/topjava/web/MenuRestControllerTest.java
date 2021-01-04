@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.topjava.DishTestData.DISH_MATCHER;
 import static ru.topjava.MenuTestData.*;
 import static ru.topjava.RestaurantTestData.RESTAURANT1_ID;
 import static ru.topjava.TestUtil.readFromJson;
@@ -125,9 +126,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void updateNotOwnDishes() throws Exception {
-        //todo !
         Menu updated = getCanUpdated();
-        innerLog.debug("Before update \n{}", menuService.get(updated.getId()));
         updated.setDishes(List.of(DishTestData.dish4, DishTestData.dish1));
         perform(MockMvcRequestBuilders.put(ADMIN_RESTAURANT1_URL + updated.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -135,8 +134,9 @@ class MenuRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(UserTestData.admin)))
                 .andDo(print())
                 .andExpect(status().isOk());
-        innerLog.debug("After update \n{}", menuService.get(updated.getId()));
-        MENU_MATCHER.assertMatch(menuService.get(updated.getId()), updated);
+        Menu actual = menuService.get(updated.getId());
+        MENU_MATCHER.assertMatch(actual, updated);
+        DISH_MATCHER.assertMatch(actual.getDishes(), DishTestData.dish1);
     }
 
     @Test

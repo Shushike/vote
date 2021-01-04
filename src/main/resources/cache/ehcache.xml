@@ -21,5 +21,13 @@
         <heap>1</heap>
     </cache-template>
 
+    <cache-template name="expiryRestaurantCache">
+        <expiry>
+            <ttl unit="minutes">5</ttl>
+        </expiry>
+        <heap unit="entries">100</heap>
+    </cache-template>
+
     <cache alias="users" uses-template="singleNonExpiryCache"/>
+    <cache alias="restaurants" uses-template="expiryRestaurantCache"/>
 </config>

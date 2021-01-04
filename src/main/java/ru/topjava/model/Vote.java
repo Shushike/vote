@@ -33,11 +33,10 @@ public class Vote extends AbstractBaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    @JsonBackReference(value = "user-vote")
-    //@JsonBackReference
-    //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    //@JsonIdentityReference(alwaysAsId = true)
-    //@JsonProperty("userId")
+    //@JsonBackReference(value = "user-vote")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = User.class)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("userId")
     private User user;
 
     @Column(name = "date_time", nullable = false)

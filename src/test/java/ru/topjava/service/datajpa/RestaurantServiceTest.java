@@ -1,11 +1,15 @@
 package ru.topjava.service.datajpa;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import ru.topjava.model.Menu;
 import ru.topjava.model.Restaurant;
+import ru.topjava.repository.JpaUtil;
 import ru.topjava.service.MenuService;
 import ru.topjava.util.exception.IllegalRequestDataException;
 import ru.topjava.util.exception.NotFoundException;
@@ -29,6 +33,19 @@ public class RestaurantServiceTest extends AbstractServiceTest {
 
     @Autowired
     protected MenuService menuService;
+
+    @Autowired
+    private CacheManager cacheManager;
+    @Autowired
+    protected JpaUtil jpaUtil;
+
+    @BeforeEach
+    public void setUp() {
+        Cache usersCache = cacheManager.getCache("restaurants");
+        if (usersCache != null)
+            usersCache.clear();
+        jpaUtil.clear2ndLevelHibernateCache();
+    }
 
     @Test
     public void delete() {
@@ -55,14 +72,12 @@ public class RestaurantServiceTest extends AbstractServiceTest {
     public void get() {
         Restaurant actual = service.get(RESTAURANT1_ID);
         RESTAURANT_MATCHER.assertMatch(actual, restaurant1);
-        innerLog.debug("Actual restaurant: "+actual.toString());
     }
 
     @Test
     public void getWithMenu() {
         Restaurant actual = service.getWithMenu(RESTAURANT1_ID);
         RESTAURANT_MATCHER.assertMatch(actual, restaurant1);
-        innerLog.debug("Actual restaurant: "+actual.toString());
     }
 
     @Test
@@ -104,7 +119,6 @@ public class RestaurantServiceTest extends AbstractServiceTest {
     @Test
     public void getVoted() {
         List<Restaurant> allVoted = service.getAllVoted(USER_ID);
-        //RESTAURANT_MATCHER.assertMatch(allVoted, List.of(restaurant1));
         innerLog.warn("Check request and list {}", allVoted);
     }
 

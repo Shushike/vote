@@ -11,13 +11,6 @@
         </encoder>
     </appender>
 
-    <appender name="result" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>%magenta(%msg%n)</pattern>
-        </encoder>
-    </appender>
-
     <appender name="transaction" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>UTF-8</charset>
@@ -26,9 +19,6 @@
     </appender>
     <logger name="org.springframework.orm.jpa.JpaTransactionManager" level="debug">
         <appender-ref ref="transaction"/>
-    </logger>
-    <logger name="result" level="INFO" additivity="false">
-        <appender-ref ref="result"/>
     </logger>
 
 <!--    <logger name="org.postgresql" level="debug"/>-->

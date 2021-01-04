@@ -37,7 +37,6 @@ public class VoteRestController {
 
     @GetMapping(REST_URL)
     public List<Vote> getAll() {
-        //без меню в ответе не имеет смысла
         int userId = SecurityUtil.authUserId();
         log.info("Get all votes for user {}", userId);
         return service.getAllForUser(userId);
