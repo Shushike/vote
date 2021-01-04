@@ -1,8 +1,6 @@
 package ru.topjava.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.Hibernate;
-import org.springframework.data.domain.Persistable;
 import org.springframework.util.Assert;
 import ru.topjava.HasId;
 

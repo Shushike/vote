@@ -22,7 +22,7 @@ import static ru.topjava.TestUtil.userHttpBasic;
 import static ru.topjava.UserTestData.admin;
 import static ru.topjava.UserTestData.user2;
 
-class RestorantRestControllerTest extends AbstractControllerTest {
+class RestaurantRestControllerTest extends AbstractControllerTest {
 
     private static final String COMMON_URL = RestaurantRestController.COMMON_URL + '/';
     private static final String ADMIN_URL = RestaurantRestController.ADMIN_URL + '/';
@@ -63,7 +63,7 @@ class RestorantRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getVotesInfo() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(COMMON_URL + RESTAURANT1_ID + "/votes-number")
+        perform(MockMvcRequestBuilders.get(COMMON_URL + RESTAURANT1_ID + "/votes-number")
                 .param("voteDate", VOTE_DATE.toString())
                 .with(userHttpBasic(user2)))
                 .andExpect(status().isOk())
@@ -74,7 +74,7 @@ class RestorantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getUnauth() throws Exception {
+    void getUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(ADMIN_URL + RESTAURANT1_ID))
                 .andExpect(status().isUnauthorized());
     }

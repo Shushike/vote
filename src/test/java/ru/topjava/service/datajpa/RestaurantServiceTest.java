@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.topjava.model.Menu;
 import ru.topjava.model.Restaurant;
 import ru.topjava.service.MenuService;
+import ru.topjava.util.exception.IllegalRequestDataException;
 import ru.topjava.util.exception.NotFoundException;
 import ru.topjava.service.RestaurantService;
 import ru.topjava.service.AbstractServiceTest;
@@ -133,6 +134,6 @@ public class RestaurantServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException(){
-        validateRootCause(() -> service.create(new Restaurant(RESTAURANT1_ID, "First", "Long st. 50", "Sea food")), IllegalArgumentException.class);
+        validateRootCause(() -> service.create(new Restaurant(RESTAURANT1_ID, "First", "Long st. 50", "Sea food")), IllegalRequestDataException.class);
     }
 }

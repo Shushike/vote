@@ -11,12 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.topjava.AuthorizedUser;
-import ru.topjava.model.AbstractBaseEntity;
 import ru.topjava.model.User;
 import ru.topjava.repository.UserRepository;
 import ru.topjava.to.UserTo;
 import ru.topjava.util.UserUtil;
-import ru.topjava.util.exception.ModifyForrbidenException;
 
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    private String NOT_NULL_MSG = "User must not be null";
+    private final String NOT_NULL_MSG = "User must not be null";
 
     public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
@@ -101,7 +99,7 @@ public class UserService implements UserDetailsService {
 
     /*protected void checkModificationAllowed(int id) {
         if (id < AbstractBaseEntity.START_SEQ + 3) {
-            throw new ModifyForrbidenException("Failed to modify - base user");
+            throw new ModifyForbiddenException("Failed to modify - base user");
         }
     }*/
 }

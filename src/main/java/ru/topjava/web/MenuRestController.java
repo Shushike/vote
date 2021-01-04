@@ -15,7 +15,6 @@ import ru.topjava.View;
 import ru.topjava.model.Menu;
 import ru.topjava.repository.datajpa.IVotesNumber;
 import ru.topjava.service.MenuService;
-import ru.topjava.service.VoteService;
 import ru.topjava.to.MenuTo;
 import ru.topjava.to.StatisticsTo;
 
@@ -38,8 +37,6 @@ public class MenuRestController {
 
     @Autowired
     private MenuService service;
-    @Autowired
-    private VoteService voteService;
 
     @GetMapping(value = {COMMON_URL + "/{id}", ADMIN_URL + "/{id}"})
     public Menu get(@PathVariable int restaurantId,
@@ -67,7 +64,6 @@ public class MenuRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int restaurantId,
                        @PathVariable int id) {
-        //checkRights(SecurityUtil.authUserIsAdmin());
         int userId = SecurityUtil.authUserId();
         log.info("Delete menu {} by user {}", id, userId);
         service.delete(id, restaurantId);
@@ -80,19 +76,16 @@ public class MenuRestController {
     }
 
     @PutMapping(value = ADMIN_URL + "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody Menu menu, @PathVariable int restaurantId, @PathVariable int id) {
-        //checkRights(SecurityUtil.authUserIsAdmin());
+    public Menu update(@Validated(View.Web.class) @RequestBody Menu menu, @PathVariable int restaurantId, @PathVariable int id) {
         int userId = SecurityUtil.authUserId();
         assureIdConsistent(menu, id);
-        //тут можно добавлять блюда в меню
+        //can add dishes to the menu
         log.info("Update {} by user {} for restaurant {}", menu, userId, restaurantId);
-        service.update(menu, restaurantId);
+        return service.update(menu, restaurantId);
     }
 
     @PostMapping(value = ADMIN_URL, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Menu> createWithLocation(@Validated(View.Web.class) @RequestBody Menu menu, @PathVariable int restaurantId) {
-        //checkRights(SecurityUtil.authUserIsAdmin());
         int userId = SecurityUtil.authUserId();
         checkNew(menu);
         log.info("Create {} by user {} for restaurant {}", menu, userId, restaurantId);
@@ -115,8 +108,7 @@ public class MenuRestController {
     public Menu getOneMenuByDate(@PathVariable int restaurantId,
                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate menuDate) {
         log.info("Get menu for #{} restaurant and date {}", restaurantId, menuDate);
-        Menu result = service.getByDate(restaurantId, menuDate);
-        return result;
+        return service.getByDate(restaurantId, menuDate);
     }
 
     /*

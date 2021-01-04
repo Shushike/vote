@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.topjava.util.ValidationUtil;
 import ru.topjava.util.exception.*;
-//import ru.topjava.util.exception.IllegalRequestDataException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,7 +24,7 @@ import static ru.topjava.util.exception.ErrorType.*;
 @RestControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class ExceptionInfoHandler {
-    private static Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
     //  http://stackoverflow.com/a/22358422/548473
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -41,8 +40,8 @@ public class ExceptionInfoHandler {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(ModifyForrbidenException.class)
-    public ErrorInfo failedModify(HttpServletRequest req, ModifyForrbidenException e) {
+    @ExceptionHandler(ModifyForbiddenException.class)
+    public ErrorInfo failedModify(HttpServletRequest req, ModifyForbiddenException e) {
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 

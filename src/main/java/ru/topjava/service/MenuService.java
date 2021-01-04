@@ -2,14 +2,13 @@ package ru.topjava.service;
 
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.topjava.model.Menu;
 import ru.topjava.model.Vote;
 import ru.topjava.repository.MenuRepository;
 import ru.topjava.repository.VoteRepository;
 import ru.topjava.repository.datajpa.IVotesNumber;
-import ru.topjava.util.exception.ModifyForrbidenException;
+import ru.topjava.util.exception.ModifyForbiddenException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,14 +36,13 @@ public class MenuService extends RepositoryService<Menu> {
         return menuRepository.save(menu, restaurantId);
     }
 
-    public void update(Menu menu, int restaurantId) {
-        //обновлять и создавать объекты может только администратор!
+    public Menu update(Menu menu, int restaurantId) {
         Assert.notNull(menu, "Menu must not be null");
         //если изменилась дата и уже есть голоса за меню, то запретить измения даты
         List<Vote> menuVotes = voteRepository.getAllForMenu(menu.id());
         if (menuVotes != null && !menuVotes.isEmpty())
-            throw new ModifyForrbidenException(String.format("Menu #%s on date %s already has votes", menu.id(), menu.getDate()));
-        checkNotFoundWithId(menuRepository.save(menu, restaurantId), menu.id());
+            throw new ModifyForbiddenException(String.format("Menu #%s on date %s already has votes", menu.id(), menu.getDate()));
+        return checkNotFoundWithId(menuRepository.save(menu, restaurantId), menu.id());
     }
 
     public boolean delete(int id, int restaurantId) {

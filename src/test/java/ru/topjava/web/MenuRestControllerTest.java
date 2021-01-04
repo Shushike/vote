@@ -1,6 +1,5 @@
 package ru.topjava.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -16,7 +15,6 @@ import ru.topjava.DishTestData;
 import ru.topjava.MenuTestData;
 import ru.topjava.UserTestData;
 import ru.topjava.model.Menu;
-import ru.topjava.service.DishService;
 import ru.topjava.service.MenuService;
 import ru.topjava.util.exception.NotFoundException;
 import ru.topjava.web.json.JsonUtil;
@@ -45,27 +43,22 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MenuService menuService;
-    @Autowired
-    private DishService dishService;
 
     @Test
     void get() throws Exception {
 
         ResultMatcher matcher = MENU_MATCHER.contentJson(menu1);
-        ResultActions resultActions = perform(MockMvcRequestBuilders.get(COMMON_RESTAURANT1_URL + MENU1_ID)
+        perform(MockMvcRequestBuilders.get(COMMON_RESTAURANT1_URL + MENU1_ID)
                 .with(userHttpBasic(UserTestData.user2)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(matcher);
-        //resultActions.andReturn()
-        //Menu item = TestUtil.readFromJsonMvcResult(resultActions.andReturn(), Menu.class);
-        //System.out.println(item);
     }
 
 
     @Test
-    public void givenBidirectionRelation__whenDeserializingWithIdentity__thenCorrect() throws JsonProcessingException, IOException {
+    public void jsonRead() throws IOException {
         String json =
                 "{\"id\":2,\"description\":\"opening\",\"date\":\"2020-11-04\",\"dish\":null, \"restaurantId\":\"100003\"}";
         Menu item = getMapper().readerFor(Menu.class).readValue(json);
@@ -73,7 +66,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getUnauth() throws Exception {
+    void getUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(COMMON_RESTAURANT1_URL))
                 .andExpect(status().isUnauthorized());
     }
@@ -109,7 +102,8 @@ class MenuRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(UserTestData.admin)))
-                .andExpect(status().isNoContent());
+                .andDo(print())
+                .andExpect(status().isOk());
         innerLog.debug("After update \n{}", menuService.get(updated.getId()));
         MENU_MATCHER.assertMatch(menuService.get(updated.getId()), updated);
     }
@@ -123,7 +117,8 @@ class MenuRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(UserTestData.admin)))
-                .andExpect(status().isNoContent());
+                .andDo(print())
+                .andExpect(status().isOk());
         innerLog.debug("After update \n{}", menuService.get(updated.getId()));
         MENU_MATCHER.assertMatch(menuService.get(updated.getId()), updated);
     }
@@ -138,7 +133,8 @@ class MenuRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(UserTestData.admin)))
-                .andExpect(status().isNoContent());
+                .andDo(print())
+                .andExpect(status().isOk());
         innerLog.debug("After update \n{}", menuService.get(updated.getId()));
         MENU_MATCHER.assertMatch(menuService.get(updated.getId()), updated);
     }
@@ -172,7 +168,6 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void create() throws Exception {
-        Menu newMenu = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(ADMIN_RESTAURANT1_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"date\":\"2020-12-26\",\"dish\":[{\"id\":\"100005\"},{\"id\":\"100006\"}],\"description\":\"New menu\"}")
@@ -181,7 +176,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
         Menu created = readFromJson(action, Menu.class);
         int newId = created.id();
-        System.out.println("Ceated menu " + menuService.get(newId));
+        System.out.println("Created menu " + menuService.get(newId));
     }
 
     @Test
@@ -224,14 +219,12 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getByDateForUser() throws Exception {
-        //todo: menuTo comparing
         perform(MockMvcRequestBuilders.get(MenuRestController.PROFILE_URL + "/by")
                 .param("menuDate", "2020-11-04")
                 .with(userHttpBasic(UserTestData.user1)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        // .andExpect(MENU_MATCHER.contentJson(menu1, menu3));
     }
 
     @ParameterizedTest
@@ -263,7 +256,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getVotesNubmerByDate() throws Exception {
+    void getVotesNumberByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(RestaurantRestController.COMMON_URL + "/votes-number")
                 .param("voteDate", "2020-11-04")
                 .with(userHttpBasic(UserTestData.user2)))
@@ -274,7 +267,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
     @ParameterizedTest
     @CsvSource({", 2020-11-04", "2020-11-04, 2020-11-06", ","})
-    void getVoteNubmers(LocalDate startDate, LocalDate endDate) throws Exception {
+    void getVoteNumbers(LocalDate startDate, LocalDate endDate) throws Exception {
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(RestaurantRestController.COMMON_URL + "/votes-number");
         if (startDate != null)
             builder.param("startDate", String.valueOf(startDate));

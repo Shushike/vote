@@ -15,7 +15,6 @@ import ru.topjava.model.User;
 import ru.topjava.service.UserService;
 import ru.topjava.to.UserTo;
 import ru.topjava.util.UserUtil;
-import ru.topjava.web.user.UniqueMailValidator;
 
 import java.util.List;
 

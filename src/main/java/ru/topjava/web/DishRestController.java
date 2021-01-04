@@ -32,9 +32,8 @@ public class DishRestController {
     @GetMapping(value = {COMMON_REST_URL + "/{id}", ADMIN_REST_URL + "/{id}" })
     public Dish get(@PathVariable int restaurantId,
                     @PathVariable int id) {
-        log.info("Get dish {}", id);
-
-        return service.get(id);
+        log.info("Get dish {} for restaurant {}", id, restaurantId);
+        return service.get(id, restaurantId);
     }
 
     @DeleteMapping(ADMIN_REST_URL + "/{id}")

@@ -7,7 +7,6 @@ import org.springframework.validation.Errors;
 import ru.topjava.HasIdAndEmail;
 import ru.topjava.model.User;
 import ru.topjava.repository.UserRepository;
-import ru.topjava.web.ExceptionInfoHandler;
 
 
 @Component

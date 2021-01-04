@@ -26,7 +26,7 @@ public class RestaurantRestController {
     static final String ADMIN_URL = "/rest/admin/restaurants";
     private final Logger log = LoggerFactory.getLogger(RestaurantRestController.class);
 
-    //здесь все кроме чтения делает только админ!
+    //all actions can be done only by administrator but get
 
     @Autowired
     private RestaurantService service;
@@ -53,7 +53,6 @@ public class RestaurantRestController {
     @DeleteMapping(ADMIN_URL + "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        //checkRights(SecurityUtil.authUserIsAdmin());
         int userId = SecurityUtil.authUserId();
         log.info("Delete restaurant {} by user {}", id, userId);
         service.delete(id);

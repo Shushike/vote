@@ -25,7 +25,6 @@ import static ru.topjava.UserTestData.user2;
 
 class DishRestControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = DishRestController.COMMON_URL + '/';
     private static final String COMMON_RESTAURANT1_URL = DishRestController.COMMON_URL + '/' + RESTAURANT1_ID + "/dishes/";
     private static final String ADMIN_RESTAURANT1_URL = DishRestController.ADMIN_URL + '/' + RESTAURANT1_ID + "/dishes/";
 
@@ -43,7 +42,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getUnauth() throws Exception {
+    void getUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(COMMON_RESTAURANT1_URL))
                 .andExpect(status().isUnauthorized());
     }

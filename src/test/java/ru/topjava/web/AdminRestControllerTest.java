@@ -12,7 +12,6 @@ import ru.topjava.model.Role;
 import ru.topjava.model.User;
 import ru.topjava.service.UserService;
 import ru.topjava.util.exception.NotFoundException;
-import ru.topjava.web.json.JsonUtil;
 import ru.topjava.web.user.AdminRestController;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.topjava.TestUtil.readFromJson;
-//import static ru.topjava.TestUtil.userHttpBasic;
 import static ru.topjava.TestUtil.userHttpBasic;
 import static ru.topjava.UserTestData.*;
 import static ru.topjava.util.exception.ErrorType.VALIDATION_ERROR;

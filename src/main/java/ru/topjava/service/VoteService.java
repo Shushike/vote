@@ -10,7 +10,7 @@ import ru.topjava.repository.MenuRepository;
 import ru.topjava.repository.VoteRepository;
 import ru.topjava.util.ValidationUtil;
 import ru.topjava.util.exception.InvalidPropertyException;
-import ru.topjava.util.exception.ModifyForrbidenException;
+import ru.topjava.util.exception.ModifyForbiddenException;
 import ru.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
@@ -27,15 +27,15 @@ public class VoteService {
 
     private final VoteRepository voteRepository;
     private final MenuRepository menuRepository;
-    private String FAILED_MSG = "Failed to find vote for menu #%s by user #%s";
-    private String NOT_NULL_MSG = "Vote must not be null";
+    private final String FAILED_MSG = "Failed to find vote for menu #%s by user #%s";
+    private final String NOT_NULL_MSG = "Vote must not be null";
 
     public VoteService(VoteRepository repository, MenuRepository menuRepository) {
         voteRepository = repository;
         this.menuRepository = menuRepository;
     }
 
-    protected boolean checkUpdateTime(int menuId, boolean isNew) throws ModifyForrbidenException, NotFoundException {
+    protected boolean checkUpdateTime(int menuId, boolean isNew) throws ModifyForbiddenException, NotFoundException {
         Menu menu = ValidationUtil.checkNotFoundWithId(menuRepository.get(menuId), "menu", menuId);
         innerLog.debug("Menu date {} is after current date: {}", menu.getDate(), LocalDate.now().isBefore(menu.getDate()));
         if (LocalDate.now().isBefore(menu.getDate())) {
@@ -45,7 +45,7 @@ public class VoteService {
             /*If it is before 11:00 we assume that he changed his mind.
               If it is after 11:00 then it is too late, vote can't be changed*/
             if (!LocalDateTime.now().isBefore(LocalDateTime.of(menu.getDate(), LocalTime.of(11, 0))))
-                throw new ModifyForrbidenException(isNew ? "Vote can't be created" : "Vote can't be changed");
+                throw new ModifyForbiddenException(isNew ? "Vote can't be created" : "Vote can't be changed");
         }
         return true;
     }

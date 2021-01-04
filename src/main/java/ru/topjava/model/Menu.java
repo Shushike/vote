@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.*;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.annotation.Transient;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.util.CollectionUtils;
 import ru.topjava.View;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -37,6 +36,7 @@ import java.util.stream.Collectors;
                 }
         )
 })
+@SuppressWarnings("deprecation")
 public class Menu extends AbstractBaseEntity {
 
     public static final String DELETE = "Menu.delete";
@@ -63,7 +63,8 @@ public class Menu extends AbstractBaseEntity {
     private Set<Dish> dish;
 
     @Size(min = 2, max = 120)
-    @Column(name = "description", nullable = true)
+    @Column(name = "description")
+    @SafeHtml(groups = {View.Web.class}, whitelistType = SafeHtml.WhiteListType.NONE)
     protected String description;
 
     @OneToMany(mappedBy = "menu", targetEntity = Vote.class)
@@ -133,11 +134,6 @@ public class Menu extends AbstractBaseEntity {
             if (getRestaurant() == null)
                 return Set.copyOf(dishes);
             else {
-                for (Dish dish : dishes) {
-
-                    System.out.println(dish + " " + String.valueOf(dish.getRestaurant()));
-                }
-
                 return dishes.stream()
                         .filter(dish -> getRestaurant().equals(dish.getRestaurant()))
                         .collect(Collectors.toSet());
@@ -147,10 +143,10 @@ public class Menu extends AbstractBaseEntity {
 
     public boolean hasVote(int userId) {
         if (!CollectionUtils.isEmpty(getVotes())) {
-            return getVotes().stream().filter(
+            return getVotes().stream().anyMatch(
                     userVote -> {
                         return userVote.getUser() != null && userVote.getUser().getId() == userId;
-                    }).findFirst().isPresent();
+                    });
         }
         return false;
     }

@@ -9,7 +9,7 @@ import ru.topjava.model.Menu;
 import ru.topjava.repository.datajpa.IVotesNumber;
 import ru.topjava.service.AbstractServiceTest;
 import ru.topjava.service.MenuService;
-import ru.topjava.util.exception.ModifyForrbidenException;
+import ru.topjava.util.exception.ModifyForbiddenException;
 import ru.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-
-import javax.swing.text.html.Option;
 
 import static ru.topjava.MenuTestData.*;
 import static ru.topjava.RestaurantTestData.RESTAURANT1_ID;
@@ -77,7 +75,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     @Test
     public void invalidUpdate() {
         Menu updated = getCannotUpdated();
-        assertThrows(ModifyForrbidenException.class, () -> service.update(updated, RESTAURANT1_ID));
+        assertThrows(ModifyForbiddenException.class, () -> service.update(updated, RESTAURANT1_ID));
     }
 
     @Test

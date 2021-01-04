@@ -39,7 +39,7 @@ public class MenuTestData {
 
     public static Menu getCanUpdated() {
         Menu menu = new Menu(MENU4_ID, LocalDate.now(), null, "Updated menu");
-        menu.setRestaurant(RestaurantTestData.restaurant1);
+        //menu.setRestaurant(RestaurantTestData.restaurant1);
         return menu;
     }
 

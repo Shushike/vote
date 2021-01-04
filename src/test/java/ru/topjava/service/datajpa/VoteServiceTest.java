@@ -9,7 +9,7 @@ import ru.topjava.UserTestData;
 import ru.topjava.model.Vote;
 import ru.topjava.service.AbstractServiceTest;
 import ru.topjava.service.VoteService;
-import ru.topjava.util.exception.ModifyForrbidenException;
+import ru.topjava.util.exception.ModifyForbiddenException;
 import ru.topjava.util.exception.NotFoundException;
 
 import java.util.List;
@@ -109,7 +109,7 @@ public class VoteServiceTest extends AbstractServiceTest {
     @Test
     public void invalidUpdate() {
         Vote updated = getCannotUpdated();
-        assertThrows(ModifyForrbidenException.class, () ->
+        assertThrows(ModifyForbiddenException.class, () ->
                 service.update(updated, MENU1_ID, USER1_ID));
     }
 
@@ -129,9 +129,7 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException() {
-        validateRootCause(() -> service.create(MENU1_ID, USER2_ID), ModifyForrbidenException.class);
-        //удаляем все записи пользователя за день до создания нового голоса
-        //validateRootCause(() -> service.create(MENU15_ID, USER1_ID), JdbcSQLIntegrityConstraintViolationException.class);
+        validateRootCause(() -> service.create(MENU1_ID, USER2_ID), ModifyForbiddenException.class);
         validateRootCause(() -> service.create(NOT_FOUND, USER2_ID), NotFoundException.class);
         validateRootCause(() -> service.create(MENU5_ID, NOT_FOUND), NotFoundException.class);
     }
