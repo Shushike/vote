@@ -1,6 +1,7 @@
 package ru.topjava.util;
 
-import ru.topjava.model.AbstractBaseEntity;
+import ru.topjava.HasId;
+import ru.topjava.util.exception.IllegalRequestDataException;
 import ru.topjava.util.exception.InsufficientRightsException;
 import ru.topjava.util.exception.NotFoundException;
 
@@ -13,8 +14,9 @@ public class ValidationUtil {
         return object;
     }
 
-    public static void checkNotFoundWithId(boolean found, int id) {
+    public static boolean checkNotFoundWithId(boolean found, int id) {
         checkNotFound(found, "ID=" + id);
+        return found;
     }
 
     public static <T> T checkNotFoundWithId(T object, String msg,  int id) {
@@ -37,9 +39,9 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkNew(AbstractBaseEntity entity) {
-        if (!entity.isNew()) {
-            throw new IllegalArgumentException(entity + " must be new (ID=null)");
+    public static void checkNew(HasId bean) {
+        if (!bean.isNew()) {
+            throw new IllegalRequestDataException(bean + " must be new (id=null)");
         }
     }
 
@@ -48,12 +50,12 @@ public class ValidationUtil {
             throw new InsufficientRightsException();
     }
 
-    public static void assureIdConsistent(AbstractBaseEntity entity, int id) {
-//      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
-        if (entity.isNew()) {
-            entity.setId(id);
-        } else if (entity.id() != id) {
-            throw new IllegalArgumentException(entity + " must be with ID=" + id);
+    public static void assureIdConsistent(HasId bean, int id) {
+        // conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
+        if (bean.isNew()) {
+            bean.setId(id);
+        } else if (bean.id() != id) {
+            throw new IllegalArgumentException(bean + " must be with ID=" + id);
         }
     }
 

@@ -60,14 +60,20 @@ public class DataJpaVoteRepository implements VoteRepository {
 
     @Override
     @Transactional
-    public boolean delete(int menuId, int userId) {
-        return crudRepository.delete(menuId, userId) != 0;
+    public boolean deleteForMenu(int menuId, int userId) {
+        return crudRepository.deleteForMenu(menuId, userId) != 0;
     }
 
     @Override
     @Transactional
     public boolean delete(int id) {
         return crudRepository.delete(id) != 0;
+    }
+
+    @Override
+    @Transactional
+    public boolean delete(int id, int userId) {
+        return crudRepository.delete(id, userId) != 0;
     }
 
     @Override

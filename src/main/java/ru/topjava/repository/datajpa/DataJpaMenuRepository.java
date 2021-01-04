@@ -1,5 +1,6 @@
 package ru.topjava.repository.datajpa;
 
+import io.swagger.models.auth.In;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.topjava.model.Dish;
@@ -10,6 +11,7 @@ import ru.topjava.util.ValidationUtil;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class DataJpaMenuRepository implements MenuRepository {
@@ -26,6 +28,7 @@ public class DataJpaMenuRepository implements MenuRepository {
     @Transactional
     public Menu save(Menu menu, int restaurantId) {
         menu.setRestaurant(restaurantRepository.findEntityById(restaurantId));
+        //todo: фильтровать dish по принадлежности к ресторану
         return crudRepository.save(menu);
     }
 
@@ -36,8 +39,14 @@ public class DataJpaMenuRepository implements MenuRepository {
     }
 
     @Override
+    @Transactional
+    public boolean delete(int id, int restaurantId) {
+        return crudRepository.delete(id, restaurantId) != 0;
+    }
+
+    @Override
     public Menu get(int id) {
-        return crudRepository.findById(id).orElse(null);
+        return crudRepository.get(id);
     }
 
     @Override
@@ -69,5 +78,25 @@ public class DataJpaMenuRepository implements MenuRepository {
     @Override
     public List<Menu> getBetweenInclude(LocalDate startDate, LocalDate endDate) {
         return crudRepository.getBetweenInclude(startDate, endDate);
+    }
+
+    @Override
+    public List<Menu> getVotedBetweenDateForUser(LocalDate startDate, LocalDate endDate, int userId) {
+        return crudRepository.getVotedBetweenDateForUser(startDate, endDate, userId);
+    }
+
+    @Override
+    public List<IVotesNumber> getVoteNumberByDate(LocalDate localDate) {
+        return crudRepository.getNumbersByDate(localDate);
+    }
+
+    @Override
+    public List<IVotesNumber> getVoteNumbers(LocalDate startDate, LocalDate endDate) {
+        return crudRepository.getVoteNumbers(startDate, endDate);
+    }
+
+    @Override
+    public Menu get(int id, int restaurantId) {
+        return crudRepository.get(id, restaurantId);
     }
 }

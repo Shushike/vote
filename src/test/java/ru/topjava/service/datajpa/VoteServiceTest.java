@@ -15,6 +15,8 @@ import ru.topjava.util.exception.NotFoundException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ru.topjava.MenuTestData.MENU1_ID;
+import static ru.topjava.MenuTestData.MENU5_ID;
 import static ru.topjava.VoteTestData.*;
 
 public class VoteServiceTest extends AbstractServiceTest {
@@ -24,9 +26,9 @@ public class VoteServiceTest extends AbstractServiceTest {
     protected VoteService service;
 
     @Test
-    public void delete() {
-        service.delete(MENU12_ID, USER1_ID);
-        assertThrows(NotFoundException.class, () -> service.get(MENU12_ID, USER1_ID));
+    public void deleteForMenu() {
+        service.deleteForMenu(MENU1_ID, USER1_ID);
+        assertThrows(NotFoundException.class, () -> service.get(MENU1_ID, USER1_ID));
     }
 
     @Test
@@ -37,7 +39,7 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     public void deleteNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, USER1_ID));
+        assertThrows(NotFoundException.class, () -> service.deleteForMenu(NOT_FOUND, USER1_ID));
     }
 
     @Test
@@ -51,7 +53,7 @@ public class VoteServiceTest extends AbstractServiceTest {
         Vote created = service.create(MenuTestData.menu5.id(), USER2_ID);
         innerLog.debug("List after creation {} ", service.getAllForUser(USER2_ID));
 
-        VOTE_MATCHER.assertMatch(service.get(MENU15_ID, USER2_ID), created);
+        VOTE_MATCHER.assertMatch(service.get(MENU5_ID, USER2_ID), created);
         VOTE_MATCHER.assertMatch(service.getByDateForUser(USER2_ID, MenuTestData.menu5.getDate()), created);
     }
 
@@ -68,7 +70,7 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     public void get() {
-        Vote actual = service.get(MENU12_ID, USER1_ID);
+        Vote actual = service.get(MENU1_ID, USER1_ID);
         innerLog.debug("get {} expected {} ", actual, vote1);
         VOTE_MATCHER.assertMatch(actual, vote1);
     }
@@ -99,7 +101,7 @@ public class VoteServiceTest extends AbstractServiceTest {
     public void update() {
         Vote updated = getCanUpdated();
         innerLog.debug("{} before update", updated);
-        service.update(updated, MENU15_ID, USER1_ID);
+        service.update(updated, MENU5_ID, USER1_ID);
         innerLog.debug("{} updated", updated);
         VOTE_MATCHER.assertMatch(service.getById(updated.id(), USER1_ID), updated);
     }
@@ -108,12 +110,12 @@ public class VoteServiceTest extends AbstractServiceTest {
     public void invalidUpdate() {
         Vote updated = getCannotUpdated();
         assertThrows(ModifyForrbidenException.class, () ->
-                service.update(updated, MENU12_ID, USER1_ID));
+                service.update(updated, MENU1_ID, USER1_ID));
     }
 
     @Test
     public void getAllForMenu() {
-        List<Vote> list = service.getAllForMenu(MENU12_ID);
+        List<Vote> list = service.getAllForMenu(MENU1_ID);
         innerLog.debug("Menu votes: {}", list);
         VOTE_MATCHER.assertMatch(list, menu12Votes);
     }
@@ -127,10 +129,10 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException() {
-        validateRootCause(() -> service.create(MENU12_ID, USER2_ID), ModifyForrbidenException.class);
+        validateRootCause(() -> service.create(MENU1_ID, USER2_ID), ModifyForrbidenException.class);
         //удаляем все записи пользователя за день до создания нового голоса
         //validateRootCause(() -> service.create(MENU15_ID, USER1_ID), JdbcSQLIntegrityConstraintViolationException.class);
         validateRootCause(() -> service.create(NOT_FOUND, USER2_ID), NotFoundException.class);
-        validateRootCause(() -> service.create(MENU15_ID, NOT_FOUND), NotFoundException.class);
+        validateRootCause(() -> service.create(MENU5_ID, NOT_FOUND), NotFoundException.class);
     }
 }

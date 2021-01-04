@@ -1,13 +1,18 @@
 package ru.topjava.repository;
 
 import ru.topjava.model.Menu;
+import ru.topjava.repository.datajpa.IVotesNumber;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface MenuRepository extends BaseRepository<Menu> {
     // null if not found, when updated
     Menu save(Menu menu, int restaurantId);
+
+    boolean delete(int id, int restaurantId);
 
     List<Menu> getAll(int restaurantId);
 
@@ -24,7 +29,7 @@ public interface MenuRepository extends BaseRepository<Menu> {
     Menu getByDate(int restaurantId, LocalDate localDate);
 
     /**
-     * Return list of menu with dishes for date all restaurant.
+     * Return list of menu with dishes for date in all restaurants.
      * Ordered by restaurant ID
      */
     List<Menu> getAllByDate(LocalDate localDate);
@@ -32,4 +37,12 @@ public interface MenuRepository extends BaseRepository<Menu> {
     List<Menu> getAllByRestaurant(int restaurantId);
 
     List<Menu> getBetweenInclude(LocalDate startDate, LocalDate endDate);
+
+    List<Menu> getVotedBetweenDateForUser(LocalDate startDate, LocalDate endDate, int userId);
+
+    List<IVotesNumber> getVoteNumberByDate(LocalDate localDate);
+
+    List<IVotesNumber> getVoteNumbers(LocalDate startDate, LocalDate endDate);
+
+    Menu get(int id, int restaurantId);
 }

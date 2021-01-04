@@ -1,6 +1,6 @@
 package ru.topjava.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -9,8 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.stream.Collectors;
 
 @NamedQueries({
         @NamedQuery(name = Vote.BY_MENU, query = "SELECT v FROM Vote v WHERE v.menu.id=:menuId"),
@@ -28,14 +26,18 @@ public class Vote extends AbstractBaseEntity {
     @JoinColumn(name = "menu_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    @JsonBackReference
+    @JsonBackReference(value = "menu-vote")
     private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    @JsonBackReference
+    @JsonBackReference(value = "user-vote")
+    //@JsonBackReference
+    //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    //@JsonIdentityReference(alwaysAsId = true)
+    //@JsonProperty("userId")
     private User user;
 
     @Column(name = "date_time", nullable = false)
@@ -73,6 +75,7 @@ public class Vote extends AbstractBaseEntity {
         return menu;
     }
 
+
     public User getUser() {
         return user;
     }
@@ -100,7 +103,7 @@ public class Vote extends AbstractBaseEntity {
         } catch (LazyInitializationException e) {
             return false;
         }
-        return getUser() != null;
+        return true;
     }
 
     public boolean isMenuLoaded() {
@@ -110,7 +113,7 @@ public class Vote extends AbstractBaseEntity {
         } catch (LazyInitializationException e) {
             return false;
         }
-        return getMenu() != null;
+        return true;
     }
 
 

@@ -48,7 +48,7 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
 
     @Override
     public List<Restaurant> getAllVoted(int userId) {
-        return crudRepository.getAllVoited(userId);
+        return crudRepository.getAllVoted(userId);
     }
 
     @Override
@@ -70,7 +70,12 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     }
 
     @Override
-    public int getVoteCount(int restaurantId, LocalDate localDate) {
-        return crudRepository.getVoteCount(restaurantId, localDate);
+    public int getVotesNumber(int restaurantId, LocalDate localDate) {
+        return crudRepository.getVotesNumber(restaurantId, localDate);
+    }
+
+    @Override
+    public List<Restaurant> getBetween(LocalDate startDate, LocalDate endDate) {
+        return crudRepository.getBetween(startDate, endDate);
     }
 }

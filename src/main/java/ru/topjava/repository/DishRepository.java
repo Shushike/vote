@@ -11,4 +11,8 @@ public interface DishRepository extends BaseRepository<Dish> {
     List<Dish> getAll(int restaurantId);
 
     List<Dish> getByName(int restaurantId, String name);
+
+    Dish get(int id, int restaurantId);
+
+    boolean delete(int id, int restaurantId);
 }

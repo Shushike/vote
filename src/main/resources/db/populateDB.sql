@@ -7,9 +7,9 @@ DELETE FROM menu;
 ALTER SEQUENCE global_seq RESTART WITH 100000;
 
 INSERT INTO user (name, email, password)
-VALUES ('User', 'user@yandex.ru', 'password'),
-       ('Admin', 'admin@gmail.com', 'admin'),
-       ('Simple User', 'user@yahoo.com', 'password');
+VALUES ('User', 'user@yandex.ru', '{noop}password'),
+       ('Admin', 'admin@gmail.com', '{noop}admin'),
+       ('Simple User', 'user@yahoo.com', '{noop}password');
 
 INSERT INTO user_role (role, user_id)
 VALUES ('USER', 100000),
@@ -53,6 +53,6 @@ INSERT INTO vote (menu_id, user_id, date_time)
 VALUES (100012, 100000, TIMESTAMP '2020-11-04 09:34:18'),
        (100014, 100002, TIMESTAMP '2020-11-04 08:00:02'),
        (100013, 100000, TIMESTAMP '2020-11-04 10:00:00'),
-       (100012, 100002, TIMESTAMP '2020-11-03 15:20:00'),
+       (100012, 100001, TIMESTAMP '2020-11-03 15:20:00'),
        (100016, 100000, TIMESTAMP '2020-12-03 12:26:00'),
        (100017, 100001, TIMESTAMP '2020-12-18 18:06:00');

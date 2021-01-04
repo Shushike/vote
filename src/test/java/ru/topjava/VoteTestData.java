@@ -9,16 +9,12 @@ import java.util.List;
 import static ru.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class VoteTestData {
-    public static TestMatcher<Vote> VOTE_MATCHER = TestMatcher.usingIgnoringFieldsComparator("user", "menu");
+    public static TestMatcher<Vote> VOTE_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Vote.class, "user", "menu");
 
     public static final int NOT_FOUND = 10;
     public static final int USER1_ID = UserTestData.USER_ID;// START_SEQ;
     public static final int USER2_ID = START_SEQ + 1;
     public static final int USER3_ID = START_SEQ + 2;
-    public static final int MENU12_ID = MenuTestData.MENU1_ID;// START_SEQ + 12;
-    public static final int MENU13_ID = START_SEQ + 13;
-    public static final int MENU14_ID = START_SEQ + 14;
-    public static final int MENU15_ID = MenuTestData.MENU5_ID;
 
     public static final int VOTE1_ID = START_SEQ + 18;
     public static final int VOTE2_ID = START_SEQ + 19;

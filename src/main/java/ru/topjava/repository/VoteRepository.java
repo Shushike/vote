@@ -1,6 +1,5 @@
 package ru.topjava.repository;
 
-import ru.topjava.model.Dish;
 import ru.topjava.model.Vote;
 import ru.topjava.util.exception.NotFoundException;
 
@@ -31,8 +30,10 @@ public interface VoteRepository {
 
     boolean delete(int id);
 
+    boolean delete(int id, int userId);
+
     // false if not found
-    boolean delete(int menuId, int userId);
+    boolean deleteForMenu(int menuId, int userId);
 
     /**
      * Return list of votes with menus

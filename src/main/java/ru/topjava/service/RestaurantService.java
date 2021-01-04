@@ -9,6 +9,7 @@ import ru.topjava.repository.RestaurantRepository;
 import java.time.LocalDate;
 import java.util.List;
 
+import static ru.topjava.util.DateUtil.*;
 import static ru.topjava.util.ValidationUtil.checkNew;
 import static ru.topjava.util.ValidationUtil.checkNotFoundWithId;
 
@@ -33,7 +34,9 @@ public class RestaurantService extends RepositoryService<Restaurant> {
         checkNotFoundWithId(restaurantRepository.save(restaurant), restaurant.id());
     }
 
-    public void delete(int id){ checkNotFoundWithId(restaurantRepository.delete(id), id);}
+    public boolean delete(int id) {
+        return checkNotFoundWithId(restaurantRepository.delete(id), id);
+    }
 
     public List<Restaurant> getAll() {
         return restaurantRepository.getAll();
@@ -55,11 +58,15 @@ public class RestaurantService extends RepositoryService<Restaurant> {
         return restaurantRepository.getWithDishes(restaurantId);
     }
 
+    public List<Restaurant> getBetween(@Nullable LocalDate startDate, @Nullable LocalDate endDate) {
+        return restaurantRepository.getBetween(atDayOrMin(startDate), atDayOrMax(endDate));
+    }
+
     public Restaurant getWholeInfo(int restaurantId) {
         return restaurantRepository.getWholeInfo(restaurantId);
     }
 
-    public int getVoteCount(int restaurantId, LocalDate voteDate) {
-        return restaurantRepository.getVoteCount(restaurantId, voteDate);
+    public int getVotesNumber(int restaurantId, LocalDate voteDate) {
+        return restaurantRepository.getVotesNumber(restaurantId, voteDate);
     }
 }

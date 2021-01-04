@@ -1,12 +1,12 @@
 package ru.topjava.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.util.CollectionUtils;
+import ru.topjava.View;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -18,22 +18,40 @@ import java.util.stream.Collectors;
 
 @NamedQueries({
         @NamedQuery(name = Menu.DELETE, query = "DELETE FROM Menu m WHERE m.id=:id"),
-        @NamedQuery(name = Menu.BY_DATE, query = "SELECT DISTINCT (m) FROM Menu m LEFT JOIN FETCH m.dish WHERE m.date=?1"),
+        @NamedQuery(name = Menu.BY_DATE, query = "SELECT DISTINCT (m) FROM Menu m LEFT JOIN FETCH m.dish LEFT JOIN FETCH m.vote WHERE m.date=?1"),
         @NamedQuery(name = Menu.ALL_SORTED, query = "SELECT m FROM Menu m ORDER BY m.date DESC, m.id"),
 })
 @Entity
 @Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "menu_date"}, name = "menu_restaurant_date_idx")})
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "menu-complex-graph",
+                attributeNodes = {
+                        @NamedAttributeNode(value = "dish"),
+                        @NamedAttributeNode(value = "restaurant"),
+                        @NamedAttributeNode(value = "vote", subgraph = "subgraph.users")
+                },
+                subgraphs = {
+                        @NamedSubgraph(name = "subgraph.users",
+                                attributeNodes = @NamedAttributeNode(value = "user"))
+                }
+        )
+})
 public class Menu extends AbstractBaseEntity {
 
     public static final String DELETE = "Menu.delete";
     public static final String BY_DATE = "Menu.getByDate";
     public static final String ALL_SORTED = "Menu.getAllSorted";
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
-    @JsonBackReference
+    @NotNull(groups = View.Persist.class)
+    //@JsonBackReference(value = "restaurant-menus")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Restaurant.class)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("restaurantId")
+    // @JsonIgnore
     private Restaurant restaurant;
 
     @Column(name = "menu_date", nullable = false)
@@ -42,21 +60,14 @@ public class Menu extends AbstractBaseEntity {
 
     @CollectionTable(name = "menu_dish", joinColumns = @JoinColumn(name = "menu_id"))
     @ElementCollection(fetch = FetchType.LAZY)
-    @JsonManagedReference
     private Set<Dish> dish;
 
     @Size(min = 2, max = 120)
     @Column(name = "description", nullable = true)
     protected String description;
 
-    //@CollectionTable(name = "vote", joinColumns = @JoinColumn(name = "menu_id"))
-    /*@JoinColumns({
-            @JoinColumn(name = "vote_menu_id", referencedColumnName = "vote_menu_id", insertable = false, updatable = false)
-            ,
-            @JoinColumn(name = "vote_user_id", referencedColumnName = "vote_user_id", insertable = false, updatable = false)
-    })*/
     @OneToMany(mappedBy = "menu", targetEntity = Vote.class)
-    @JsonManagedReference
+    @JsonManagedReference(value = "menu-vote")
     private Set<Vote> vote;
 
     public Menu() {
@@ -114,6 +125,36 @@ public class Menu extends AbstractBaseEntity {
         this.dish = CollectionUtils.isEmpty(dishes) ? new HashSet<>() : Set.copyOf(dishes);
     }
 
+    public Set<Dish> filterRestaurantDishes(Collection<Dish> dishes) {
+        //не работает, потому что не подгружен ресторан у блюда
+        if (CollectionUtils.isEmpty(dishes))
+            return new HashSet<>();
+        else {
+            if (getRestaurant() == null)
+                return Set.copyOf(dishes);
+            else {
+                for (Dish dish : dishes) {
+
+                    System.out.println(dish + " " + String.valueOf(dish.getRestaurant()));
+                }
+
+                return dishes.stream()
+                        .filter(dish -> getRestaurant().equals(dish.getRestaurant()))
+                        .collect(Collectors.toSet());
+            }
+        }
+    }
+
+    public boolean hasVote(int userId) {
+        if (!CollectionUtils.isEmpty(getVotes())) {
+            return getVotes().stream().filter(
+                    userVote -> {
+                        return userVote.getUser() != null && userVote.getUser().getId() == userId;
+                    }).findFirst().isPresent();
+        }
+        return false;
+    }
+
     public boolean isVotesLoaded() {
         try {
             if (getVotes() != null)
@@ -126,7 +167,8 @@ public class Menu extends AbstractBaseEntity {
 
     public boolean isDishesLoaded() {
         try {
-            getDishes().isEmpty();
+            if (getDishes() != null)
+                getDishes().isEmpty();
         } catch (LazyInitializationException e) {
             return false;
         }
@@ -142,11 +184,11 @@ public class Menu extends AbstractBaseEntity {
                 ", date=" + date +
                 ", description=" + String.valueOf(description) +
                 (listStart + "Dishes: " + (isDishesLoaded() ?
-                        (getDishes().isEmpty() ? EMPTY :
+                        (CollectionUtils.isEmpty(getDishes()) ? EMPTY :
                                 subElementStart + dish.stream().map(Dish::toString).collect(Collectors.joining("," + subElementStart))) :
                         WAS_NOT_LOADED)) +
                 (listStart + "Votes: " + (isVotesLoaded() ?
-                        (getVotes().isEmpty() ? EMPTY :
+                        (CollectionUtils.isEmpty(getVotes()) ? EMPTY :
                                 subElementStart + vote.stream().map(Vote::toString).collect(Collectors.joining("," + subElementStart))) :
                         WAS_NOT_LOADED)) +
                 '}';

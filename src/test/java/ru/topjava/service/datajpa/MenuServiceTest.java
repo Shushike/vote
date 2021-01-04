@@ -1,10 +1,12 @@
 package ru.topjava.service.datajpa;
 
 import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
+import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.topjava.model.Menu;
+import ru.topjava.repository.datajpa.IVotesNumber;
 import ru.topjava.service.AbstractServiceTest;
 import ru.topjava.service.MenuService;
 import ru.topjava.util.exception.ModifyForrbidenException;
@@ -12,13 +14,18 @@ import ru.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import javax.swing.text.html.Option;
+
 import static ru.topjava.MenuTestData.*;
 import static ru.topjava.RestaurantTestData.RESTAURANT1_ID;
+import static ru.topjava.UserTestData.USER_ID;
 
 public class MenuServiceTest extends AbstractServiceTest {
     private static final Logger innerLog = LoggerFactory.getLogger(MenuServiceTest.class);
@@ -92,6 +99,13 @@ public class MenuServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void getVotedBetweenDateForUser() {
+        List<Menu> found = service.getVotedBetweenDateForUser(MENU_DATE1, MENU_DATE2, USER_ID);
+        innerLog.debug("Found voted menus: " + found.toString());
+        MENU_MATCHER.assertMatch(found, menu2, menu1);
+    }
+
+    @Test
     public void getByRestaurant() {
         List<Menu> found = service.getAllByRestaurant(RESTAURANT1_ID);
         MENU_MATCHER.assertMatch(found, restaurant1_menus);
@@ -108,5 +122,35 @@ public class MenuServiceTest extends AbstractServiceTest {
     public void createWithException() {
         validateRootCause(() -> service.create(new Menu(null, menu1.getDate(), null/*menu1.getDishList()*/, null), RESTAURANT1_ID), JdbcSQLIntegrityConstraintViolationException.class);
         validateRootCause(() -> service.create(new Menu(null, LocalDate.now(), null/*menu1.getDishList()*/, null), NOT_FOUND), NotFoundException.class);
+    }
+
+    @Test
+    public void getVotes() {
+        List<IVotesNumber> numbers = service.get(MENU_DATE1);
+        Assertions.assertArrayEquals(
+                numbers.stream()
+                        .mapToInt(record -> Optional.ofNullable(record.getVoteNumber()).orElse(0L).intValue())
+                        .toArray(),
+                new int[]{2, 1});
+        innerLog.debug("Actual votes: \n" +
+                numbers.stream()
+                        .map(record -> String.format("%s : %s", record.getRestaurantId(), record.getVoteNumber()))
+                        .collect(Collectors.joining("\n"))
+        );
+    }
+
+    @Test
+    public void getVoteNumbers() {
+        List<IVotesNumber> numbers = service.get(MENU_DATE1, MENU_DATE2);
+        Assertions.assertArrayEquals(
+                numbers.stream()
+                        .mapToInt(record -> Optional.ofNullable(record.getVoteNumber()).orElse(0L).intValue())
+                        .toArray(),
+                new int[]{1, 0, 2, 1});
+        innerLog.debug("Actual votes: \n" +
+                numbers.stream()
+                        .map(record -> String.format("%s %s: %s", record.getMenuDate(), record.getRestaurantId(), record.getVoteNumber()))
+                        .collect(Collectors.joining("\n"))
+        );
     }
 }

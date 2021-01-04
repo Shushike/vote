@@ -4,12 +4,15 @@ import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.topjava.model.Menu;
 import ru.topjava.model.Restaurant;
+import ru.topjava.service.MenuService;
 import ru.topjava.util.exception.NotFoundException;
 import ru.topjava.service.RestaurantService;
 import ru.topjava.service.AbstractServiceTest;
 
 import javax.validation.ConstraintViolationException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,6 +25,9 @@ public class RestaurantServiceTest extends AbstractServiceTest {
 
     @Autowired
     protected RestaurantService service;
+
+    @Autowired
+    protected MenuService menuService;
 
     @Test
     public void delete() {
@@ -103,7 +109,26 @@ public class RestaurantServiceTest extends AbstractServiceTest {
 
     @Test
     public void getVoteCount() {
-        Assertions.assertEquals(service.getVoteCount(RESTAURANT1_ID, VOTE_DATE), 1);
+        Assertions.assertEquals(service.getVotesNumber(RESTAURANT1_ID, VOTE_DATE), 2);
+        Assertions.assertEquals(service.getVotesNumber(RESTAURANT2_ID, VOTE_DATE), 1);
+        Assertions.assertEquals(service.getVotesNumber(RESTAURANT2_ID, LocalDate.of(2020, 11, 1)), 0);
+    }
+
+    @Test
+    public void getBetween() {
+        List<Restaurant> actual = service.getBetween(LocalDate.of(2020, 11, 1), LocalDate.of(2020, 11, 2));
+        Assertions.assertTrue(actual.isEmpty());
+        actual = service.getBetween(VOTE_DATE, LocalDate.of(2020, 11, 5));
+        innerLog.debug("Actual restaurants: "+actual.toString());
+        RESTAURANT_MATCHER.assertMatch(actual, restaurants);
+
+        Restaurant created = service.create(getNew());
+        actual = service.getBetween(VOTE_DATE, LocalDate.of(2020, 11, 5));
+        RESTAURANT_MATCHER.assertMatch(actual, restaurants);
+
+        menuService.create(new Menu(null, VOTE_DATE, null, "Test between request"), created.id());
+        actual = service.getBetween(VOTE_DATE, LocalDate.of(2020, 11, 5));
+        RESTAURANT_MATCHER.assertMatch(actual, List.of(restaurant1, created, restaurant2));
     }
 
     @Test

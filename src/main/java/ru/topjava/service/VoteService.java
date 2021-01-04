@@ -9,6 +9,7 @@ import ru.topjava.model.Vote;
 import ru.topjava.repository.MenuRepository;
 import ru.topjava.repository.VoteRepository;
 import ru.topjava.util.ValidationUtil;
+import ru.topjava.util.exception.InvalidPropertyException;
 import ru.topjava.util.exception.ModifyForrbidenException;
 import ru.topjava.util.exception.NotFoundException;
 
@@ -36,7 +37,7 @@ public class VoteService {
 
     protected boolean checkUpdateTime(int menuId, boolean isNew) throws ModifyForrbidenException, NotFoundException {
         Menu menu = ValidationUtil.checkNotFoundWithId(menuRepository.get(menuId), "menu", menuId);
-        innerLog.debug("Menu date {} is after current date {}", menu.getDate(), LocalDate.now().isBefore(menu.getDate()));
+        innerLog.debug("Menu date {} is after current date: {}", menu.getDate(), LocalDate.now().isBefore(menu.getDate()));
         if (LocalDate.now().isBefore(menu.getDate())) {
             innerLog.debug("Can change vote");
         } else {
@@ -55,6 +56,12 @@ public class VoteService {
         return voteRepository.save(vote, menuId, userId);
     }
 
+    public Vote create(Vote vote, int userId) {
+        if (vote.getMenu() == null)
+            throw new InvalidPropertyException("Failed to get menu");
+        return create(vote, vote.getMenu().getId(), userId);
+    }
+
     /**
      * Create new vote for menu and user with current time.
      * Return created vote
@@ -68,6 +75,12 @@ public class VoteService {
         Assert.notNull(vote, NOT_NULL_MSG);
         checkUpdateTime(menuId, vote.isNew());
         checkNotFoundWithId(voteRepository.save(vote, menuId, userId), vote.id());
+    }
+
+    public void update(Vote vote, int userId) {
+        if (vote.getMenu() == null)
+            throw new InvalidPropertyException("Failed to get menu");
+        update(vote, vote.getMenu().getId(), userId);
     }
 
     /**
@@ -84,12 +97,16 @@ public class VoteService {
         return checkNotFound(voteRepository.get(menuId, userId), String.format(FAILED_MSG, menuId, userId));
     }
 
-    public void delete(int menuId, int userId) {
-        checkNotFound(voteRepository.delete(menuId, userId), String.format(FAILED_MSG, menuId, userId));
+    public void deleteForMenu(int menuId, int userId) {
+        checkNotFound(voteRepository.deleteForMenu(menuId, userId), String.format(FAILED_MSG, menuId, userId));
     }
 
     public void delete(int id) {
         checkNotFoundWithId(voteRepository.delete(id), id);
+    }
+
+    public void delete(int id, int userId) {
+        checkNotFoundWithId(voteRepository.delete(id, userId), id);
     }
 
     /**
@@ -112,5 +129,7 @@ public class VoteService {
      * Return vote of user for menu on menuDate
      * with menu
      */
-    public Vote getByDateForUser(int userId, LocalDate menuDate){ return voteRepository.getByDate(userId, menuDate);}
+    public Vote getByDateForUser(int userId, LocalDate menuDate) {
+        return voteRepository.getByDate(userId, menuDate);
+    }
 }

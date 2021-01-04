@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Transactional(readOnly = true)
-public interface CrudRestaurantRepository  extends JpaRepository<Restaurant, Integer> {
+public interface CrudRestaurantRepository extends JpaRepository<Restaurant, Integer> {
     @Modifying
     @Transactional
     @Query("DELETE FROM Restaurant r WHERE r.id=:id")
@@ -24,9 +24,9 @@ public interface CrudRestaurantRepository  extends JpaRepository<Restaurant, Int
 
     @EntityGraph(attributePaths = {"menus"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT DISTINCT r FROM Restaurant r LEFT JOIN FETCH Menu m ON (m.restaurant.id=r.id) INNER JOIN Vote v on (v.menu.id=m.id) WHERE v.user.id=?1 ORDER BY r.name")
-    List<Restaurant> getAllVoited(int userId);
+    List<Restaurant> getAllVoted(int userId);
 
-    @EntityGraph(attributePaths = {"menus"}, type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(attributePaths = {"menus", "menu.vote"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT DISTINCT r FROM Restaurant r WHERE r.id=?1")
     List<Restaurant> getWithMenu(int restaurantId);
 
@@ -34,12 +34,17 @@ public interface CrudRestaurantRepository  extends JpaRepository<Restaurant, Int
     @Query("SELECT DISTINCT r FROM Restaurant r WHERE r.id=?1")
     List<Restaurant> getWithDishes(int restaurantId);
 
-    @EntityGraph(attributePaths = {"menus", "dishes"}, type = EntityGraph.EntityGraphType.LOAD)
+    //@EntityGraph(attributePaths = {"menus", "dishes"}, type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(value = "complex-graph")
     @Query("SELECT DISTINCT r FROM Restaurant r WHERE r.id=?1")
     List<Restaurant> getWholeInfo(int restaurantId);
 
     @Query("SELECT count(r) FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id) INNER JOIN Vote v on (v.menu.id=m.id) WHERE r.id=?1 AND m.date=?2")
-    int getVoteCount(int restaurantId, LocalDate localDate);
+    int getVotesNumber(int restaurantId, LocalDate localDate);
+
+    @EntityGraph(attributePaths = {"menus", "menus.dish"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT DISTINCT r FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id)  WHERE m.date>=?1 and m.date<=?2 order by r.name")
+    List<Restaurant> getBetween(LocalDate startDate, LocalDate endDate);
 
     default Restaurant findEntityById(int restaurantId) throws NotFoundException {
         return ValidationUtil.checkNotFoundWithId(this.findById(restaurantId).orElse(null), "restaurant", restaurantId);

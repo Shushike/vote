@@ -8,7 +8,7 @@ import java.util.List;
 import static ru.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MenuTestData {
-    public static TestMatcher<Menu> MENU_MATCHER = TestMatcher.usingIgnoringFieldsComparator("restaurant", "dish", "vote");
+    public static TestMatcher<Menu> MENU_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Menu.class,"restaurant", "dish", "vote");
 
     public static final int NOT_FOUND = 10;
     public static final int MENU1_ID = START_SEQ + 12;
@@ -38,7 +38,9 @@ public class MenuTestData {
     }
 
     public static Menu getCanUpdated() {
-        return new Menu(MENU4_ID, LocalDate.now(), null, "Updated menu");
+        Menu menu = new Menu(MENU4_ID, LocalDate.now(), null, "Updated menu");
+        menu.setRestaurant(RestaurantTestData.restaurant1);
+        return menu;
     }
 
     public static Menu getCannotUpdated() {

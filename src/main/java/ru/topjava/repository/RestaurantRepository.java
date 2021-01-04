@@ -16,11 +16,16 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
 
     List<Restaurant> getAllVoted(int userId);
 
-    int getVoteCount(int restaurantId, LocalDate localDate);
+    int getVotesNumber(int restaurantId, LocalDate localDate);
 
     Restaurant getWithMenu(int restaurantId);
 
     Restaurant getWithDishes(int restaurantId);
 
     Restaurant getWholeInfo(int restaurantId);
+
+    /*
+     * Return list of restaurants which has menus for that dates
+     * */
+    List<Restaurant> getBetween(LocalDate startDate, LocalDate endDate);
 }

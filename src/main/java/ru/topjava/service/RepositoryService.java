@@ -1,10 +1,8 @@
 package ru.topjava.service;
 
-import org.springframework.util.Assert;
 import ru.topjava.model.AbstractBaseEntity;
 import ru.topjava.repository.BaseRepository;
 
-import static ru.topjava.util.ValidationUtil.checkNew;
 import static ru.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 public abstract class RepositoryService<T extends AbstractBaseEntity> {
@@ -19,8 +17,8 @@ public abstract class RepositoryService<T extends AbstractBaseEntity> {
         return checkNotFoundWithId(repository.get(id), id);
     }
 
-    public void delete(int id) {
-        checkNotFoundWithId(repository.delete(id), id);
+    public boolean delete(int id) {
+       return checkNotFoundWithId(repository.delete(id), id);
     }
 
 }

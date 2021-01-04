@@ -1,21 +1,26 @@
 package ru.topjava.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+import ru.topjava.View;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.Size;
 
 
 @MappedSuperclass
-public abstract class AbstractNamedDescriptedEntity extends AbstractNamedEntity {
+@SuppressWarnings("deprecation")
+public abstract class AbstractNamedDescribedEntity extends AbstractNamedEntity {
 
     @Size(min = 2, max = 120)
-    @Column(name = "description", nullable = true)
+    @Column(name = "description")
+    @SafeHtml(groups = {View.Web.class}, whitelistType = SafeHtml.WhiteListType.NONE)
     protected String description;
 
-    protected AbstractNamedDescriptedEntity() {
+    protected AbstractNamedDescribedEntity() {
     }
 
-    protected AbstractNamedDescriptedEntity(Integer id, String name, String description) {
+    protected AbstractNamedDescribedEntity(Integer id, String name, String description) {
         super(id, name);
         this.description = description;
     }

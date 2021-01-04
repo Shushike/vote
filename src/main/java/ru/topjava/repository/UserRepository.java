@@ -12,4 +12,8 @@ public interface UserRepository extends BaseRepository<User> {
     User getByEmail(String email);
 
     List<User> getAll();
+
+    default User getWithVotes(int id) {
+        throw new UnsupportedOperationException();
+    }
 }

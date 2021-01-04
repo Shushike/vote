@@ -1,22 +1,26 @@
 package ru.topjava.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
+import ru.topjava.View;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity
 @Table(name = "dish")
-public class Dish extends AbstractNamedDescriptedEntity {
+public class Dish extends AbstractNamedDescribedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
-    @JsonBackReference
+    @NotNull(groups = View.Persist.class)
+    @JsonBackReference(value = "restaurant-dish")
     private Restaurant restaurant;
 
     @Column(name = "price", nullable = false)

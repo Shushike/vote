@@ -2,6 +2,7 @@ package ru.topjava;
 
 import ru.topjava.model.Role;
 import ru.topjava.model.User;
+import ru.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.Date;
 import static ru.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
-    public static TestMatcher<User> USER_MATCHER = TestMatcher.usingIgnoringFieldsComparator("registered", "roles");
+    public static TestMatcher<User> USER_MATCHER = TestMatcher.usingIgnoringFieldsComparator(User.class, "registered", "roles", "password", "vote");
 
     public static final int USER_ID = START_SEQ;
     public static final int ADMIN_ID = START_SEQ + 1;
@@ -32,5 +33,9 @@ public class UserTestData {
         updated.setEnabled(false);
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
+    }
+
+    public static String jsonWithPassword(User user, String passw) {
+        return JsonUtil.writeAdditionProps(user, "password", passw);
     }
 }

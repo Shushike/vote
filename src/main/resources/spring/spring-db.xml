@@ -62,6 +62,8 @@
                                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_DROP_TARGET}" value="${TOPJAVA_ROOT}/config/ddl/drop.ddl"/>
                                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_AUTO}" value="create"/>
                 -->
+                <entry key="javax.persistence.validation.group.pre-persist" value="ru.topjava.View$Persist"/>
+                <entry key="javax.persistence.validation.group.pre-update" value="ru.topjava.View$Persist"/>
             </map>
         </property>
 
