@@ -11,6 +11,7 @@ import ru.topjava.util.exception.IllegalRequestDataException;
 import ru.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -71,7 +72,9 @@ public class DishServiceTest extends AbstractServiceTest {
     @Test
     public void getByName() {
         List<Dish> found = service.getByName(RESTAURANT1_ID, DISH3_NAME);
-        DISH_MATCHER.assertMatch(found, List.of(dish3));
+        ArrayList<Dish> list = new ArrayList<>();
+        list.add(dish3);
+        DISH_MATCHER.assertMatch(found, list);
     }
 
     @Test

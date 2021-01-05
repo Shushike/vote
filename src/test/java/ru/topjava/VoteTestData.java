@@ -3,6 +3,7 @@ package ru.topjava;
 import ru.topjava.model.Vote;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,12 +29,21 @@ public class VoteTestData {
     public static final Vote vote4 = new Vote(VOTE4_ID, MenuTestData.menu1, UserTestData.user2, LocalDateTime.of(2020, 11, 03, 15, 20, 00));
     public static final Vote vote5 = new Vote(VOTE5_ID, MenuTestData.menu5, UserTestData.user1, LocalDateTime.of(2020, 12, 03, 12, 26, 00));
 
-    public static final List<Vote> menu12Votes = List.of(vote1, vote4);
-    public static final List<Vote> user1Votes = List.of(vote5, vote3, vote1);
+    public static final List<Vote> menu12Votes = new ArrayList<>();// List.of(vote1, vote4);
+    public static final List<Vote> user1Votes = new ArrayList<>();//List.of(vote5, vote3, vote1);
+
+    static {
+        menu12Votes.add(vote1);
+        menu12Votes.add(vote4);
+
+        user1Votes.add(vote5);
+        user1Votes.add(vote3);
+        user1Votes.add(vote1);
+    }
 
     /**
      * menu5 and user1
-     * */
+     */
     public static Vote getCanUpdated() {
         return new Vote(VOTE5_ID, MenuTestData.menu5, UserTestData.user1, LocalDateTime.of(2020, 12, 05, 1, 0, 0));
     }

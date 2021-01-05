@@ -128,7 +128,7 @@ public class User extends AbstractNamedEntity implements HasIdAndEmail {
     }
 
     public void setVote(Set<Vote> votes) {
-        this.vote = CollectionUtils.isEmpty(votes) ? new HashSet<>() : Set.copyOf(votes);
+        this.vote = CollectionUtils.isEmpty(votes) ? new HashSet<>() : new HashSet<>(votes);
     }
 
     public boolean isAdmin() {

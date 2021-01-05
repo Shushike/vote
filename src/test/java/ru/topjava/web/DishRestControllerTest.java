@@ -10,6 +10,7 @@ import ru.topjava.service.DishService;
 import ru.topjava.util.exception.NotFoundException;
 import ru.topjava.web.json.JsonUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -113,13 +114,15 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBreadForRestaurant() throws Exception {
+        ArrayList<Dish> list = new ArrayList<>();
+        list.add(dish3);
         perform(MockMvcRequestBuilders.get(COMMON_RESTAURANT1_URL)
                 .param("name", "bread")
                 .with(userHttpBasic(user2)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_MATCHER.contentJson(List.of(dish3)));
+                .andExpect(DISH_MATCHER.contentJson(list));
     }
 
     @Test

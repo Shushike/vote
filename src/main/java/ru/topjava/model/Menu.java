@@ -107,7 +107,7 @@ public class Menu extends AbstractBaseEntity {
     }
 
     public void setVote(Set<Vote> votes) {
-        this.vote = CollectionUtils.isEmpty(votes) ? new HashSet<>() : Set.copyOf(votes);
+        this.vote = CollectionUtils.isEmpty(votes) ? new HashSet<>() : new HashSet<>(votes);
     }
 
     public void setRestaurant(Restaurant restaurant) {
@@ -123,7 +123,7 @@ public class Menu extends AbstractBaseEntity {
     }
 
     public void setDishes(Collection<Dish> dishes) {
-        this.dish = CollectionUtils.isEmpty(dishes) ? new HashSet<>() : Set.copyOf(dishes);
+        this.dish = CollectionUtils.isEmpty(dishes) ? new HashSet<>() : new HashSet<>(dishes);
     }
 
     public boolean hasVote(int userId) {

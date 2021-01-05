@@ -1,6 +1,8 @@
 package ru.topjava;
 
 import ru.topjava.model.Dish;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static ru.topjava.model.AbstractBaseEntity.START_SEQ;
@@ -21,9 +23,16 @@ public class DishTestData {
     public static final Dish dish3 = new Dish(DISH3_ID, "Bread", 500, "Piece of white bread");
     public static final Dish dish4 = new Dish(DISH4_ID, "Chicken soup", 8000, "Soup recipe");
 
-    public static final List<Dish> restaurant1Dishes = List.of(dish3, dish1, dish2);
-    public static final List<Dish> menu1Dishes = List.of(dish1, dish3);
+    public static final List<Dish> restaurant1Dishes = new ArrayList<>();
+    public static final List<Dish> menu1Dishes = new ArrayList<>();
+    static {
+        restaurant1Dishes.add(dish3);
+        restaurant1Dishes.add(dish1);
+        restaurant1Dishes.add(dish2);
 
+        menu1Dishes.add(dish1);
+        menu1Dishes.add(dish3);
+    }
     public static Dish getNew() {
         return new Dish(null, "Kebab", 1330, "Grilled meat");
     }

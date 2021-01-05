@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import ru.topjava.DishTestData;
 import ru.topjava.model.Menu;
 import ru.topjava.model.Restaurant;
 import ru.topjava.repository.JpaUtil;
@@ -18,6 +19,7 @@ import ru.topjava.service.AbstractServiceTest;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -113,7 +115,9 @@ public class RestaurantServiceTest extends AbstractServiceTest {
 
     @Test
     public void getByAddress() {
-        RESTAURANT_MATCHER.assertMatch(service.getByAddress(RESTAURANT1_ADDRESS), List.of(restaurant1));
+        ArrayList<Restaurant> list = new ArrayList<>();
+        list.add(restaurant1);
+        RESTAURANT_MATCHER.assertMatch(service.getByAddress(RESTAURANT1_ADDRESS), list);
     }
 
     @Test
@@ -143,7 +147,11 @@ public class RestaurantServiceTest extends AbstractServiceTest {
 
         menuService.create(new Menu(null, VOTE_DATE, null, "Test between request"), created.id());
         actual = service.getBetween(VOTE_DATE, LocalDate.of(2020, 11, 5));
-        RESTAURANT_MATCHER.assertMatch(actual, List.of(restaurant1, created, restaurant2));
+        ArrayList<Restaurant> list = new ArrayList<>();
+        list.add(restaurant1);
+        list.add(created);
+        list.add(restaurant2);
+        RESTAURANT_MATCHER.assertMatch(actual, list);
     }
 
     @Test

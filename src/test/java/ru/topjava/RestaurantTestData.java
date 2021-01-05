@@ -3,6 +3,7 @@ package ru.topjava;
 import ru.topjava.model.Restaurant;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ru.topjava.model.AbstractBaseEntity.START_SEQ;
@@ -19,13 +20,18 @@ public class RestaurantTestData {
     public static final Restaurant restaurant1 = new Restaurant(RESTAURANT1_ID, "First", RESTAURANT1_ADDRESS, "Sea food");
     public static final Restaurant restaurant2 = new Restaurant(RESTAURANT2_ID, "Second", "Broadway st. 40", "Popular place");
 
-    public static final List<Restaurant> restaurants = List.of(restaurant1, restaurant2);
+    public static final List<Restaurant> restaurants = new ArrayList<>();//List.of(restaurant1, restaurant2);
+
+    static {
+        restaurants.add(restaurant1);
+        restaurants.add(restaurant2);
+    }
 
     public static Restaurant getNew() {
         return new Restaurant(null, "Kebab", "Lenina 100", "Fried meat");
     }
 
     public static Restaurant getUpdated() {
-        return new Restaurant(RESTAURANT1_ID, restaurant1.getName()+" Modified", "Too Long st. 50", "Sea food restaurant");
+        return new Restaurant(RESTAURANT1_ID, restaurant1.getName() + " Modified", "Too Long st. 50", "Sea food restaurant");
     }
 }

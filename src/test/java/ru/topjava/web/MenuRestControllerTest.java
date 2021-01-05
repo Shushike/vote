@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.topjava.DishTestData;
 import ru.topjava.MenuTestData;
 import ru.topjava.UserTestData;
+import ru.topjava.model.Dish;
 import ru.topjava.model.Menu;
 import ru.topjava.service.MenuService;
 import ru.topjava.util.exception.NotFoundException;
@@ -21,6 +22,7 @@ import ru.topjava.web.json.JsonUtil;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.topjava.DishTestData.DISH_MATCHER;
+import static ru.topjava.DishTestData.dish4;
 import static ru.topjava.MenuTestData.*;
 import static ru.topjava.RestaurantTestData.RESTAURANT1_ID;
 import static ru.topjava.TestUtil.readFromJson;
@@ -127,7 +130,10 @@ class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     void updateNotOwnDishes() throws Exception {
         Menu updated = getCanUpdated();
-        updated.setDishes(List.of(DishTestData.dish4, DishTestData.dish1));
+        ArrayList<Dish> list = new ArrayList<Dish>();
+        list.add(DishTestData.dish4);
+        list.add(DishTestData.dish1);
+        updated.setDishes(list);
         perform(MockMvcRequestBuilders.put(ADMIN_RESTAURANT1_URL + updated.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated))

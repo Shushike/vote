@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ru.topjava.util.ValidationUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
@@ -22,8 +23,11 @@ public class GlobalExceptionHandler {
         Throwable rootCause = ValidationUtil.getRootCause(e);
 
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        ModelAndView mav = new ModelAndView("exception",
-                Map.of("exception", rootCause, "message", rootCause.toString(), "status", httpStatus));
+        HashMap propMap = new HashMap<>();
+        propMap.put("exception", rootCause);
+        propMap.put("message", rootCause.toString());
+        propMap.put("status", httpStatus);
+        ModelAndView mav = new ModelAndView("exception", propMap);
         mav.setStatus(httpStatus);
 
         // Interceptor is not invoked, put userTo

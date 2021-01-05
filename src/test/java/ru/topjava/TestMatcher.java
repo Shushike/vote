@@ -2,6 +2,7 @@ package ru.topjava;
 
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -41,7 +42,9 @@ public class TestMatcher<T> {
 
     @SafeVarargs
     public final void assertMatch(Iterable<T> actual, T... expected) {
-        assertMatch(actual, List.of(expected));
+        List param = new ArrayList();
+        param.add(expected);
+        assertMatch(actual, param);
     }
 
     public void assertMatch(Iterable<T> actual, Iterable<T> expected) {
@@ -54,7 +57,9 @@ public class TestMatcher<T> {
 
     @SafeVarargs
     public final ResultMatcher contentJson(T... expected) {
-        return contentJson(List.of(expected));
+        List param = new ArrayList();
+        param.add(expected);
+        return contentJson(param);
     }
 
     public ResultMatcher contentJson(Iterable<T> expected) {

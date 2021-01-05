@@ -11,7 +11,7 @@ import ru.topjava.to.UserTo;
 import ru.topjava.util.UserUtil;
 import ru.topjava.web.json.JsonUtil;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -47,7 +47,10 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(REST_URL)
                 .with(userHttpBasic(user2)))
                 .andExpect(status().isNoContent());
-        USER_MATCHER.assertMatch(userService.getAll(), List.of(admin, user1));
+        ArrayList<User> list = new ArrayList<>();
+        list.add(admin);
+        list.add(user1);
+        USER_MATCHER.assertMatch(userService.getAll(), list);
     }
 
     @Test
