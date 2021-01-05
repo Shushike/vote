@@ -199,9 +199,20 @@ class MenuRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MENU_MATCHER.contentJson(menu1, menu3));
     }
+
+    @Test
+    void getAllForPeriod() throws Exception {
+        perform(MockMvcRequestBuilders.get(MenuRestController.PROFILE_URL + "/by")
+                .param("startDate", "2020-11-04")
+                .with(userHttpBasic(UserTestData.user1)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
     @Test
     void getByDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(RestaurantRestController.ADMIN_URL+"/"+ RESTAURANT1_ID + "/menus/by")
+        perform(MockMvcRequestBuilders.get(RestaurantRestController.ADMIN_URL + "/" + RESTAURANT1_ID + "/menus/by")
                 .param("menuDate", "2020-11-04")
                 .with(userHttpBasic(UserTestData.admin)))
                 .andDo(print())

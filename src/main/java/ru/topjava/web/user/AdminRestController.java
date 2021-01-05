@@ -1,5 +1,8 @@
 package ru.topjava.web.user;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +16,13 @@ import ru.topjava.model.User;
 import java.net.URI;
 import java.util.List;
 
+@Api(tags = {"Administrator controller"})
+@SwaggerDefinition(tags = {
+        @Tag(name = "Administrator controller", description = "Provides operations for administrators")
+})
 @RestController
 @RequestMapping(value = AdminRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class AdminRestController extends ru.topjava.web.user.AbstractUserController {
+public class AdminRestController extends AbstractUserController {
 
     public static final String REST_URL = "/rest/admin/users";
 
@@ -51,7 +58,7 @@ public class AdminRestController extends ru.topjava.web.user.AbstractUserControl
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody User user, @PathVariable int id) throws BindException {
         validateBeforeUpdate(user, id);
-        log.info("update {} with id={}", user, id);
+        log.info("Update {} with id={}", user, id);
         service.update(user);
     }
 
@@ -68,9 +75,9 @@ public class AdminRestController extends ru.topjava.web.user.AbstractUserControl
         super.enable(id, enabled);
     }
 
-    @GetMapping("/{id}/with-votes")
-    public User getWithMeals(@PathVariable int id) {
-        //любой пользователь с записями голосования
-        return super.getWithVotes(id);
+    @GetMapping("/{userId}/with-votes")
+    public User getWithVotes(@PathVariable int userId) {
+        //any user with votes
+        return super.getWithVotes(userId);
     }
 }

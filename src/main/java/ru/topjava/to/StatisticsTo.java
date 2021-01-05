@@ -1,5 +1,7 @@
 package ru.topjava.to;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -7,8 +9,11 @@ import java.util.Objects;
 
 public class StatisticsTo implements Serializable {
     private static final long serialVersionUID = 3L;
+    @ApiModelProperty(notes = "Date for which statistics are counted")
     private LocalDate menuDate;
+    @ApiModelProperty(notes = "Restaurant ID for which statistics are counted")
     private Integer restaurantId;
+    @ApiModelProperty(notes = "Votes number for restaurant on date")
     private Long votesNumber;
 
     @ConstructorProperties({"restaurantId", "votesNumber", "date"})

@@ -1,8 +1,10 @@
 package ru.topjava.to;
 
+import io.swagger.annotations.ApiModelProperty;
 import ru.topjava.HasId;
 
 public abstract class BaseTo implements HasId {
+    @ApiModelProperty(notes = "Object identifier (ID)")
     protected Integer id;
 
     public BaseTo() {

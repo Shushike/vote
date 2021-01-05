@@ -1,5 +1,8 @@
 package ru.topjava.web.user;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,10 @@ import java.net.URI;
 
 import static ru.topjava.web.SecurityUtil.authUserId;
 
+@Api(tags = {"Profile controller"})
+@SwaggerDefinition(tags = {
+        @Tag(name = "Profile controller", description = "Provides operations for profiles")
+})
 @RestController
 @RequestMapping(value = ProfileRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileRestController extends AbstractUserController {
@@ -44,11 +51,6 @@ public class ProfileRestController extends AbstractUserController {
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL).build().toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
-    }
-
-    @GetMapping("/text")
-    public String testUTF() {
-        return "Русский текст";
     }
 
     @GetMapping("/with-votes")

@@ -60,12 +60,12 @@ public class DataJpaDishRepository implements DishRepository {
 
     @Override
     public List<Dish> getByName(int restaurantId, String name) {
-        return crudRepository.getByName(restaurantId, name) ;
+        return crudRepository.getByName(restaurantId, name == null ? "%" : name.toLowerCase());
     }
 
     @Override
     public List<Dish> filter(Set<Dish> dishes, int restaurantId) {
-        if (!CollectionUtils.isEmpty(dishes)){
+        if (!CollectionUtils.isEmpty(dishes)) {
             return crudRepository.filter(dishes.stream().map(dish -> dish.getId()).collect(Collectors.toList()), restaurantId);
         }
         return null;

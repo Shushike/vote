@@ -96,7 +96,6 @@ public class MenuService extends RepositoryService<Menu> {
      * between dates with dish list
      */
     public List<Menu> getVotedBetweenDateForUser(LocalDate startDate, LocalDate endDate, int userId) {
-        //todo: startDate<=endDate
         return menuRepository.getVotedBetweenDateForUser(startDate, endDate, userId);
     }
 
@@ -112,5 +111,12 @@ public class MenuService extends RepositoryService<Menu> {
      * */
     public List<IVotesNumber> get(@Nullable LocalDate startDate, @Nullable LocalDate endDate) {
         return menuRepository.getVoteNumbers(atDayOrMin(startDate), atDayOrMax(endDate));
+    }
+
+    /**
+     * Return list of menu with dishes for date in all restaurants.
+     */
+    public List<Menu> getAllForPeriod(@Nullable LocalDate startDate, @Nullable LocalDate endDate) {
+        return menuRepository.getBetweenInclude(atDayOrMin(startDate), atDayOrMax(endDate));
     }
 }

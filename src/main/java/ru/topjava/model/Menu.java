@@ -43,7 +43,7 @@ public class Menu extends AbstractBaseEntity {
     public static final String BY_DATE = "Menu.getByDate";
     public static final String ALL_SORTED = "Menu.getAllSorted";
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull(groups = View.Persist.class)
@@ -68,7 +68,7 @@ public class Menu extends AbstractBaseEntity {
     protected String description;
 
     @OneToMany(mappedBy = "menu", targetEntity = Vote.class)
-    @JsonManagedReference(value = "menu-vote")
+    //@JsonManagedReference(value = "menu-vote")
     private Set<Vote> vote;
 
     public Menu() {

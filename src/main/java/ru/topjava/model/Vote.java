@@ -26,7 +26,10 @@ public class Vote extends AbstractBaseEntity {
     @JoinColumn(name = "menu_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    @JsonBackReference(value = "menu-vote")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Menu.class)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("menuId")
+    //@JsonBackReference(value = "menu-vote")
     private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)

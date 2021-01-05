@@ -5,8 +5,6 @@ import ru.topjava.repository.datajpa.IVotesNumber;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public interface MenuRepository extends BaseRepository<Menu> {
     // null if not found, when updated

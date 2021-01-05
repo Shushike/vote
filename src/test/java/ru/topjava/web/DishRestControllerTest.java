@@ -10,6 +10,8 @@ import ru.topjava.service.DishService;
 import ru.topjava.util.exception.NotFoundException;
 import ru.topjava.web.json.JsonUtil;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -107,6 +109,17 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(DISH_MATCHER.contentJson(restaurant1Dishes));
+    }
+
+    @Test
+    void getBreadForRestaurant() throws Exception {
+        perform(MockMvcRequestBuilders.get(COMMON_RESTAURANT1_URL)
+                .param("name", "bread")
+                .with(userHttpBasic(user2)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(DISH_MATCHER.contentJson(List.of(dish3)));
     }
 
     @Test

@@ -39,11 +39,11 @@ public interface CrudRestaurantRepository extends JpaRepository<Restaurant, Inte
     @Query("SELECT DISTINCT r FROM Restaurant r WHERE r.id=?1")
     List<Restaurant> getWholeInfo(int restaurantId);
 
-    @Query("SELECT count(r) FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id) INNER JOIN Vote v on (v.menu.id=m.id) WHERE r.id=?1 AND m.date=?2")
+    @Query("SELECT count(r) FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id) INNER JOIN Vote v ON (v.menu.id=m.id) WHERE r.id=?1 AND m.date=?2")
     int getVotesNumber(int restaurantId, LocalDate localDate);
 
     @EntityGraph(attributePaths = {"menus", "menus.dish"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT DISTINCT r FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id)  WHERE m.date>=?1 and m.date<=?2 order by r.name")
+    @Query("SELECT DISTINCT r FROM Restaurant r INNER JOIN Menu m ON (m.restaurant.id=r.id) WHERE m.date>=?1 AND m.date<=?2 ORDER BY r.name")
     List<Restaurant> getBetween(LocalDate startDate, LocalDate endDate);
 
     default Restaurant findEntityById(int restaurantId) throws NotFoundException {

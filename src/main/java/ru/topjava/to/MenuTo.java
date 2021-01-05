@@ -1,5 +1,6 @@
 package ru.topjava.to;
 
+import io.swagger.annotations.ApiModelProperty;
 import ru.topjava.model.Dish;
 
 import java.beans.ConstructorProperties;
@@ -8,9 +9,13 @@ import java.util.Objects;
 import java.util.Set;
 
 public class MenuTo extends BaseTo {
+    @ApiModelProperty(notes = "Menu date")
     private LocalDate date;
+    @ApiModelProperty(notes = "List of dishes for this date")
     private Set<Dish> dish;
+    @ApiModelProperty(notes = "Menu description")
     private String description;
+    @ApiModelProperty(notes = "Flag shows if menu are voted by current user")
     private boolean voted = false;
 
     @ConstructorProperties({"id", "date", "description", "dishes", "voted"})
