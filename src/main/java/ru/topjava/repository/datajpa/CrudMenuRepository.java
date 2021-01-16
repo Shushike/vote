@@ -46,6 +46,10 @@ public interface CrudMenuRepository extends JpaRepository<Menu, Integer> {
     List<Menu> getBetweenInclude(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @EntityGraph(attributePaths = {"dish"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT m AS menu, v as userVote FROM Menu m LEFT OUTER JOIN Vote v ON (m.id=v.menu.id AND v.user.id =:userId) WHERE m.date >= :startDate AND m.date <= :endDate ORDER BY m.date DESC, m.restaurant.name ASC")
+    List<IMenuVote> getBetweenIncludeWithUserVote(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("userId") int userId);
+
+    @EntityGraph(attributePaths = {"dish"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT m FROM Menu m INNER JOIN Vote v ON (v.menu.id=m.id) WHERE v.user.id=:userId AND m.date >= :startDate AND m.date <= :endDate ORDER BY m.date DESC")
     List<Menu> getVotedBetweenDateForUser(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("userId") int userId);
 

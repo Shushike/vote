@@ -38,9 +38,7 @@ public class MenuTestData {
     }
 
     public static Menu getCanUpdated() {
-        Menu menu = new Menu(MENU4_ID, LocalDate.now(), null, "Updated menu");
-        //menu.setRestaurant(RestaurantTestData.restaurant1);
-        return menu;
+        return new Menu(MENU4_ID, LocalDate.now(), null, "Updated menu");
     }
 
     public static Menu getCannotUpdated() {

@@ -28,6 +28,5 @@
         <heap unit="entries">100</heap>
     </cache-template>
 
-    <cache alias="users" uses-template="singleNonExpiryCache"/>
     <cache alias="restaurants" uses-template="expiryRestaurantCache"/>
 </config>

@@ -16,7 +16,6 @@ import ru.topjava.util.exception.NotFoundException;
 import ru.topjava.service.RestaurantService;
 import ru.topjava.service.AbstractServiceTest;
 
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.util.List;
 

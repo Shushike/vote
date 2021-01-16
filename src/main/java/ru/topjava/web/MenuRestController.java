@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.topjava.View;
 import ru.topjava.model.Menu;
+import ru.topjava.repository.datajpa.IMenuVote;
 import ru.topjava.repository.datajpa.IVotesNumber;
 import ru.topjava.service.MenuService;
 import ru.topjava.to.MenuTo;
@@ -112,7 +113,7 @@ public class MenuRestController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @ApiOperation(value = "Get all menus on date")
+    @ApiOperation(value = "Get all menus on date with dishes")
     @GetMapping(MENU_URL + "/by")
     public List<Menu> getByDate(@ApiParam(type = "Date", value = "Date on which menus are asked", example = "2020-11-04", required = true)
                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate menuDate) {
@@ -147,10 +148,10 @@ public class MenuRestController {
         int userId = SecurityUtil.authUserId();
         if (menuDate != null) {
             log.info("Get menus for date {} and user #{}", menuDate, userId);
-            return createTos(service.getAllByDate(menuDate), userId);
+            return createTos(service.getAllForPeriod(menuDate, menuDate, userId));
         } else {
             log.info("Get menus from {} to {} and user #{}", startDate, endDate, userId);
-            return createTos(service.getAllForPeriod(startDate, endDate), userId);
+            return createTos(service.getAllForPeriod(startDate, endDate, userId));
         }
     }
 
@@ -169,9 +170,9 @@ public class MenuRestController {
         return new MenuTo(menu.getId(), menu.getDate(), menu.getDescription(), menu.getDishes(), voted);
     }
 
-    private static List<MenuTo> createTos(List<Menu> menus, int userId) {
-        return menus.stream()
-                .map(menu -> createTo(menu, menu.hasVote(userId)))
+    private static List<MenuTo> createTos(List<IMenuVote> menuVotes) {
+        return menuVotes.stream()
+                .map(menuVote -> createTo(menuVote.getMenu(), menuVote.getUserVote() != null))
                 .collect(Collectors.toList());
     }
 }

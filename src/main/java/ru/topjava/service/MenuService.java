@@ -6,9 +6,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.topjava.model.Menu;
-import ru.topjava.model.Vote;
 import ru.topjava.repository.MenuRepository;
 import ru.topjava.repository.VoteRepository;
+import ru.topjava.repository.datajpa.IMenuVote;
 import ru.topjava.repository.datajpa.IVotesNumber;
 import ru.topjava.util.exception.ModifyForbiddenException;
 
@@ -45,8 +45,8 @@ public class MenuService extends RepositoryService<Menu> {
         //if menu date is changing and this menu already has votes, menu modifying is forbidden
         if (oldDate!=null && !oldDate.equals(menu.getDate())) {
             innerLog.debug("Menu date is changing (old value {}, new value {}), check votes", oldDate, menu.getDate());
-            List<Vote> menuVotes = voteRepository.getAllForMenu(menu.id());
-            if (menuVotes != null && !menuVotes.isEmpty())
+            boolean menuHasVotes = voteRepository.menuHasVotes(menu.id());
+            if (menuHasVotes)
                 throw new ModifyForbiddenException(String.format("Menu #%s on date %s already has votes", menu.id(), menu.getDate()));
         }
         return checkNotFoundWithId(menuRepository.save(menu, restaurantId), menu.id());
@@ -118,5 +118,13 @@ public class MenuService extends RepositoryService<Menu> {
      */
     public List<Menu> getAllForPeriod(@Nullable LocalDate startDate, @Nullable LocalDate endDate) {
         return menuRepository.getBetweenInclude(atDayOrMin(startDate), atDayOrMax(endDate));
+    }
+
+    /**
+     * Return list of pair menu (with dishes) and vote for period in all restaurants.
+     * Vote defined if user voted for menu, otherwise vote is null
+     */
+    public List<IMenuVote> getAllForPeriod(@Nullable LocalDate startDate, @Nullable LocalDate endDate, int userId) {
+        return menuRepository.getBetweenIncludeWithUserVote(atDayOrMin(startDate), atDayOrMax(endDate), userId);
     }
 }

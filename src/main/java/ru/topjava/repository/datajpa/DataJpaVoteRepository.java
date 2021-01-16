@@ -3,14 +3,10 @@ package ru.topjava.repository.datajpa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.topjava.model.Menu;
-import ru.topjava.model.User;
 import ru.topjava.model.Vote;
 import ru.topjava.repository.VoteRepository;
-import ru.topjava.service.VoteService;
-import ru.topjava.util.ValidationUtil;
 import ru.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
@@ -39,9 +35,7 @@ public class DataJpaVoteRepository implements VoteRepository {
             innerLog.debug("{} can not be update", vote);
             return null;
         }
-        //??если поменялось меню, то оно может быть за другой день для этого пользователя
         final Menu menu = menuRepository.findEntityById(menuId);
-        crudRepository.deleteForUserByDate(userId, menu.getDate(), vote.getId());
         vote.setMenu(menu);
         vote.setUser(userRepository.findEntityById(userId));
         return crudRepository.save(vote);
@@ -50,11 +44,7 @@ public class DataJpaVoteRepository implements VoteRepository {
     @Override
     @Transactional
     public Vote create(int menuId, int userId) throws NotFoundException {
-        Menu menu = menuRepository.findEntityById(menuId);
-        Vote newVote = new Vote(menu, userRepository.findEntityById(userId));
-        innerLog.debug("{} list for delete", crudRepository.check(menuId, userId));
-        //crudRepository.deleteForUserByDate(menuId, userId);
-        crudRepository.deleteForUserByDate(userId, menu.getDate(), null);
+        Vote newVote = new Vote(menuRepository.findEntityById(menuId), userRepository.findEntityById(userId));
         return crudRepository.save(newVote);
     }
 
@@ -97,13 +87,16 @@ public class DataJpaVoteRepository implements VoteRepository {
 
     @Override
     public List<Vote> getAllForUser(int userId) {
-        //подгружать меню, рестораны
         return crudRepository.getAllForUser(userId);
     }
 
     @Override
     public List<Vote> getAllForMenu(int menuId) {
-        //подгружать пользователей
         return crudRepository.getAllForMenu(menuId);
+    }
+
+    @Override
+    public boolean menuHasVotes(int menuId) {
+        return crudRepository.menuHasVotes(menuId)>0;
     }
 }

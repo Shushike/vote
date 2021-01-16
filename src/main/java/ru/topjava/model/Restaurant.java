@@ -1,14 +1,12 @@
 package ru.topjava.model;
 
 import com.fasterxml.jackson.annotation.*;
-import org.hibernate.LazyInitializationException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "restaurant")
@@ -64,47 +62,17 @@ public class Restaurant extends AbstractNamedDescribedEntity {
         return dishes == null ? Collections.emptySet() : dishes;
     }
 
-    public boolean isMenusLoaded() {
-        try {
-            if (getMenus() != null)
-                getMenus().isEmpty();
-        } catch (LazyInitializationException e) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isDishesLoaded() {
-        try {
-            if (getDishes() != null)
-                getDishes().isEmpty();
-        } catch (LazyInitializationException e) {
-            return false;
-        }
-        return true;
-    }
-
     public void setAddress(String address) {
         this.address = address;
     }
 
     @Override
     public String toString() {
-        String subElementStart = "\n\t\t";
-        String listStart = "\n\t";
         return "Restaurant{" +
                 "id=" + id +
                 ", name=" + name +
                 ", address=" + address +
                 ", description=" + description +
-                (listStart + "Dishes: " + (isDishesLoaded() ?
-                        (getDishes().isEmpty() ? EMPTY :
-                                subElementStart + dishes.stream().map(Dish::toString).collect(Collectors.joining("," + subElementStart))) :
-                        WAS_NOT_LOADED)) +
-                (listStart + "Menus: " + (isMenusLoaded() ?
-                        (getMenus().isEmpty() ? EMPTY :
-                                subElementStart + menus.stream().map(Menu::toString).collect(Collectors.joining("," + subElementStart))) :
-                        WAS_NOT_LOADED)) +
                 '}';
     }
 }

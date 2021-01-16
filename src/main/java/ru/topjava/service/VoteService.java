@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 import ru.topjava.model.Menu;
 import ru.topjava.model.Vote;
 import ru.topjava.repository.MenuRepository;
+import ru.topjava.repository.UserRepository;
 import ru.topjava.repository.VoteRepository;
 import ru.topjava.util.ValidationUtil;
 import ru.topjava.util.exception.InvalidPropertyException;
@@ -27,27 +28,30 @@ public class VoteService {
 
     private final VoteRepository voteRepository;
     private final MenuRepository menuRepository;
+    private final UserRepository userRepository;
     private final String FAILED_MSG = "Failed to find vote for menu #%s by user #%s";
     private final String NOT_NULL_MSG = "Vote must not be null";
 
-    public VoteService(VoteRepository repository, MenuRepository menuRepository) {
+    public VoteService(VoteRepository repository, MenuRepository menuRepository, UserRepository userRepository) {
         voteRepository = repository;
         this.menuRepository = menuRepository;
+        this.userRepository = userRepository;
     }
 
-    protected boolean checkUpdateTime(int menuId, boolean isNew) throws ModifyForbiddenException, NotFoundException {
+    protected void checkUpdateTime(int menuId, boolean firstTimeForDate) throws ModifyForbiddenException, NotFoundException {
         Menu menu = ValidationUtil.checkNotFoundWithId(menuRepository.get(menuId), "menu", menuId);
         innerLog.debug("Menu date {} is after current date: {}", menu.getDate(), LocalDate.now().isBefore(menu.getDate()));
         if (LocalDate.now().isBefore(menu.getDate())) {
             innerLog.debug("Can change vote");
         } else {
             innerLog.debug("Need to check time");
-            /*If it is before 11:00 we assume that he changed his mind.
-              If it is after 11:00 then it is too late, vote can't be changed*/
-            if (!LocalDateTime.now().isBefore(LocalDateTime.of(menu.getDate(), LocalTime.of(11, 0))))
-                throw new ModifyForbiddenException(isNew ? "Vote can't be created" : "Vote can't be changed");
+            /* User can vote first time on any time
+               If it is before 11:00 we assume that he changed his mind.
+               If it is after 11:00 then it is too late, vote can't be changed*/
+            if (!firstTimeForDate && !LocalDateTime.now().isBefore(LocalDateTime.of(menu.getDate(), LocalTime.of(11, 0))))
+                throw new ModifyForbiddenException("Vote can't be changed");
+
         }
-        return true;
     }
 
     public Vote create(Vote vote, int menuId, int userId) {
@@ -77,10 +81,11 @@ public class VoteService {
         checkNotFoundWithId(voteRepository.save(vote, menuId, userId), vote.id());
     }
 
-    public void update(Vote vote, int userId) {
-        if (vote.getMenu() == null)
-            throw new InvalidPropertyException("Failed to get menu");
-        update(vote, vote.getMenu().getId(), userId);
+    public Vote merge(int menuId, int userId) {
+        Menu menu = ValidationUtil.checkNotFoundWithId(menuRepository.get(menuId), "menu", menuId);
+        Vote userVote = voteRepository.getByDate(userId, menu.getDate());
+        checkUpdateTime(menuId, userVote==null);
+        return voteRepository.save(userVote==null?new Vote(menu, userRepository.get(userId)): userVote, menuId, userId);
     }
 
     /**

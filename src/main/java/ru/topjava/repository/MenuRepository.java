@@ -1,6 +1,7 @@
 package ru.topjava.repository;
 
 import ru.topjava.model.Menu;
+import ru.topjava.repository.datajpa.IMenuVote;
 import ru.topjava.repository.datajpa.IVotesNumber;
 
 import java.time.LocalDate;
@@ -41,6 +42,8 @@ public interface MenuRepository extends BaseRepository<Menu> {
     List<IVotesNumber> getVoteNumberByDate(LocalDate localDate);
 
     List<IVotesNumber> getVoteNumbers(LocalDate startDate, LocalDate endDate);
+
+    List<IMenuVote> getBetweenIncludeWithUserVote(LocalDate startDate, LocalDate endDate, int userId);
 
     Menu get(int id, int restaurantId);
 }

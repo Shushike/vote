@@ -49,12 +49,12 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     public void createBrandNew() {
-        innerLog.debug("List before creation {} ", service.getAllForUser(USER2_ID));
-        Vote created = service.create(MenuTestData.menu5.id(), USER2_ID);
-        innerLog.debug("List after creation {} ", service.getAllForUser(USER2_ID));
+        innerLog.debug("List before creation {} ", service.getAllForUser(UserTestData.USER2_ID));
+        Vote created = service.create(MenuTestData.menu5.id(), UserTestData.USER2_ID);
+        innerLog.debug("List after creation {} ", service.getAllForUser(UserTestData.USER2_ID));
 
-        VOTE_MATCHER.assertMatch(service.get(MENU5_ID, USER2_ID), created);
-        VOTE_MATCHER.assertMatch(service.getByDateForUser(USER2_ID, MenuTestData.menu5.getDate()), created);
+        VOTE_MATCHER.assertMatch(service.get(MenuTestData.menu5.id(), UserTestData.USER2_ID), created);
+        VOTE_MATCHER.assertMatch(service.getByDateForUser(UserTestData.USER2_ID, MenuTestData.menu5.getDate()), created);
     }
 
     @Test
@@ -129,8 +129,8 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException() {
-        validateRootCause(() -> service.create(MENU1_ID, USER2_ID), ModifyForbiddenException.class);
-        validateRootCause(() -> service.create(NOT_FOUND, USER2_ID), NotFoundException.class);
+        validateRootCause(() -> service.merge(MENU1_ID, UserTestData.USER_ID), ModifyForbiddenException.class);
+        validateRootCause(() -> service.create(NOT_FOUND, UserTestData.USER2_ID), NotFoundException.class);
         validateRootCause(() -> service.create(MENU5_ID, NOT_FOUND), NotFoundException.class);
     }
 }

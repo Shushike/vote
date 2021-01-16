@@ -1,8 +1,6 @@
 package ru.topjava.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
@@ -24,7 +22,7 @@ public class Dish extends AbstractNamedDescribedEntity {
 
     @Column(name = "price", nullable = false)
     @NotNull
-    @Range
+    @Range(min = 100, max = 10000000)
     private Integer price;
 
     public Dish() {

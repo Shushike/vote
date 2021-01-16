@@ -59,6 +59,6 @@ public class VoteRestController {
     public Vote updateVote(@PathVariable int menuId) {
         int userId = SecurityUtil.authUserId();
         log.info("Vote for menu #{} by user #{}", menuId, userId);
-        return service.create(menuId, userId);
+        return service.merge(menuId, userId);
     }
 }

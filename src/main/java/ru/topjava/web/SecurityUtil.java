@@ -32,12 +32,4 @@ public class SecurityUtil {
         return get().getUserTo().id();
     }
 
-    /*public static boolean authUserIsAdmin() {
-        return isAdmin;
-    }
-    public static void setAuthUserId(int id, boolean isAdmin) {
-        SecurityUtil.id = id;
-        SecurityUtil.isAdmin = isAdmin;
-    }*/
-
 }

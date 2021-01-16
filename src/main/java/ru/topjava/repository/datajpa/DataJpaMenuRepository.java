@@ -97,4 +97,9 @@ public class DataJpaMenuRepository implements MenuRepository {
     public Menu get(int id, int restaurantId) {
         return crudRepository.get(id, restaurantId);
     }
+
+    @Override
+    public List<IMenuVote> getBetweenIncludeWithUserVote(LocalDate startDate, LocalDate endDate, int userId) {
+        return crudRepository.getBetweenIncludeWithUserVote(startDate, endDate, userId);
+    }
 }

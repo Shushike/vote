@@ -1,7 +1,6 @@
 package ru.topjava.model;
 
 import com.fasterxml.jackson.annotation.*;
-import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -52,20 +51,20 @@ public class Vote extends AbstractBaseEntity {
 
     public Vote(Menu menu, User user) {
         this();
-        setMenu(menu);
-        setUser(user);
+        this.menu = menu;
+        this.user = user;
     }
 
     public Vote(Menu menu, User user, LocalDateTime localDateTime) {
-        setMenu(menu);
-        setUser(user);
+        this.menu = menu;
+        this.user = user;
         voteTime = localDateTime;
     }
 
     public Vote(Integer id, Menu menu, User user, LocalDateTime localDateTime) {
         super(id);
-        setMenu(menu);
-        setUser(user);
+        this.menu = menu;
+        this.user = user;
         voteTime = localDateTime;
     }
 
@@ -76,7 +75,6 @@ public class Vote extends AbstractBaseEntity {
     public Menu getMenu() {
         return menu;
     }
-
 
     public User getUser() {
         return user;
@@ -98,34 +96,11 @@ public class Vote extends AbstractBaseEntity {
         this.voteTime = voteTime;
     }
 
-    public boolean isUserLoaded() {
-        try {
-            if (getUser() != null)
-                getUser().getId();
-        } catch (LazyInitializationException e) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isMenuLoaded() {
-        try {
-            if (getMenu() != null)
-                getMenu().getId();
-        } catch (LazyInitializationException e) {
-            return false;
-        }
-        return true;
-    }
-
-
     @Override
     public String toString() {
         return "Vote{" +
                 "id = " + id +
                 ", vote time = " + getVoteTime() +
-                ", user = " + (isUserLoaded() ? getUser().getId() : WAS_NOT_LOADED) +
-                ", menu = " + (isMenuLoaded() ? getMenu().getId() : WAS_NOT_LOADED) +
                 '}';
     }
 }

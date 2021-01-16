@@ -1,6 +1,5 @@
 package ru.topjava.service.datajpa;
 
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import ru.topjava.service.DishService;
 import ru.topjava.util.exception.IllegalRequestDataException;
 import ru.topjava.util.exception.NotFoundException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

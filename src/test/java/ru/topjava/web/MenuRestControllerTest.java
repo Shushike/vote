@@ -57,7 +57,6 @@ class MenuRestControllerTest extends AbstractControllerTest {
                 .andExpect(matcher);
     }
 
-
     @Test
     public void jsonRead() throws IOException {
         String json =

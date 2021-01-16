@@ -1,7 +1,6 @@
 package ru.topjava.model;
 
 import com.fasterxml.jackson.annotation.*;
-import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -13,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @NamedQueries({
         @NamedQuery(name = Menu.DELETE, query = "DELETE FROM Menu m WHERE m.id=:id"),
@@ -126,52 +124,12 @@ public class Menu extends AbstractBaseEntity {
         this.dish = CollectionUtils.isEmpty(dishes) ? new HashSet<>() : Set.copyOf(dishes);
     }
 
-    public boolean hasVote(int userId) {
-        if (!CollectionUtils.isEmpty(getVotes())) {
-            return getVotes().stream().anyMatch(
-                    userVote -> {
-                        return userVote.getUser() != null && userVote.getUser().getId() == userId;
-                    });
-        }
-        return false;
-    }
-
-    public boolean isVotesLoaded() {
-        try {
-            if (getVotes() != null)
-                getVotes().isEmpty();
-        } catch (LazyInitializationException e) {
-            return false;
-        }
-        return getVotes() != null;
-    }
-
-    public boolean isDishesLoaded() {
-        try {
-            if (getDishes() != null)
-                getDishes().isEmpty();
-        } catch (LazyInitializationException e) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
-        String subElementStart = "\n\t\t";
-        String listStart = "\n\t";
         return "Menu{" +
                 "id=" + id +
                 ", date=" + date +
                 ", description=" + String.valueOf(description) +
-                (listStart + "Dishes: " + (isDishesLoaded() ?
-                        (CollectionUtils.isEmpty(getDishes()) ? EMPTY :
-                                subElementStart + dish.stream().map(Dish::toString).collect(Collectors.joining("," + subElementStart))) :
-                        WAS_NOT_LOADED)) +
-                (listStart + "Votes: " + (isVotesLoaded() ?
-                        (CollectionUtils.isEmpty(getVotes()) ? EMPTY :
-                                subElementStart + vote.stream().map(Vote::toString).collect(Collectors.joining("," + subElementStart))) :
-                        WAS_NOT_LOADED)) +
                 '}';
     }
 }

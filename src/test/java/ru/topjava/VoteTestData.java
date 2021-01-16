@@ -42,10 +42,6 @@ public class VoteTestData {
         return new Vote(VOTE1_ID, MenuTestData.menu1, UserTestData.user1, LocalDateTime.of(2020, 12, 05, 1, 0, 0));
     }
 
-    public static Vote getBrandNew() {
-        return new Vote(LocalDateTime.of(2020, 12, 05, 1, 0, 0));
-    }
-
     public static Vote getNew() {
         return new Vote(MenuTestData.menu5, UserTestData.user2, LocalDateTime.of(2020, 12, 05, 1, 0, 0));
     }

@@ -46,4 +46,6 @@ public interface VoteRepository {
      * ordered by descending vote time
      */
     List<Vote> getAllForMenu(int menuId);
+
+    boolean menuHasVotes(int menuId);
 }
