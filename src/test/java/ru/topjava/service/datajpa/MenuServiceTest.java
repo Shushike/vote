@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.topjava.model.Menu;
-import ru.topjava.repository.datajpa.IVotesNumber;
+import ru.topjava.repository.IVotesNumber;
 import ru.topjava.service.AbstractServiceTest;
 import ru.topjava.service.MenuService;
 import ru.topjava.util.exception.ModifyForbiddenException;

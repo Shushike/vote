@@ -3,12 +3,13 @@ package ru.topjava.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.topjava.model.Menu;
 import ru.topjava.model.Vote;
-import ru.topjava.repository.MenuRepository;
-import ru.topjava.repository.UserRepository;
-import ru.topjava.repository.VoteRepository;
+import ru.topjava.repository.datajpa.CrudMenuRepository;
+import ru.topjava.repository.datajpa.CrudUserRepository;
+import ru.topjava.repository.datajpa.CrudVoteRepository;
 import ru.topjava.util.ValidationUtil;
 import ru.topjava.util.exception.InvalidPropertyException;
 import ru.topjava.util.exception.ModifyForbiddenException;
@@ -23,17 +24,18 @@ import static ru.topjava.util.ValidationUtil.checkNotFound;
 import static ru.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
-public class VoteService {
-    private static final Logger innerLog = LoggerFactory.getLogger(VoteService.class);
+public class VoteService extends RepositoryService<Vote> {
 
-    private final VoteRepository voteRepository;
-    private final MenuRepository menuRepository;
-    private final UserRepository userRepository;
+    private static final Logger innerLog = LoggerFactory.getLogger(VoteService.class);
+    private final CrudVoteRepository crudRepository;
+    private final CrudMenuRepository menuRepository;
+    private final CrudUserRepository userRepository;
     private final String FAILED_MSG = "Failed to find vote for menu #%s by user #%s";
     private final String NOT_NULL_MSG = "Vote must not be null";
 
-    public VoteService(VoteRepository repository, MenuRepository menuRepository, UserRepository userRepository) {
-        voteRepository = repository;
+    public VoteService(CrudVoteRepository crudRepository, CrudMenuRepository menuRepository, CrudUserRepository userRepository) {
+        super(crudRepository);
+        this.crudRepository = crudRepository;
         this.menuRepository = menuRepository;
         this.userRepository = userRepository;
     }
@@ -57,7 +59,7 @@ public class VoteService {
     public Vote create(Vote vote, int menuId, int userId) {
         Assert.notNull(vote, NOT_NULL_MSG);
         checkUpdateTime(menuId, vote.isNew());
-        return voteRepository.save(vote, menuId, userId);
+        return save(vote, menuId, userId);
     }
 
     public Vote create(Vote vote, int userId) {
@@ -70,48 +72,60 @@ public class VoteService {
      * Create new vote for menu and user with current time.
      * Return created vote
      */
-    public Vote create(int menuId, int userId) {
+    public Vote create(int menuId, int userId) throws NotFoundException {
         checkUpdateTime(menuId, true);
-        return voteRepository.create(menuId, userId);
+        Vote newVote = new Vote(menuRepository.findEntityById(menuId), userRepository.findEntityById(userId));
+        return crudRepository.save(newVote);
+    }
+
+    @Transactional
+    public Vote save(Vote vote, int menuId, int userId) {
+        //check is this vote of user
+        if (!vote.isNew() && getById(vote.id(), userId) == null) {
+            innerLog.debug("{} can not be update", vote);
+            return null;
+        }
+        final Menu menu = menuRepository.findEntityById(menuId);
+        vote.setMenu(menu);
+        vote.setUser(userRepository.findEntityById(userId));
+        return crudRepository.save(vote);
     }
 
     public void update(Vote vote, int menuId, int userId) {
         Assert.notNull(vote, NOT_NULL_MSG);
         checkUpdateTime(menuId, vote.isNew());
-        checkNotFoundWithId(voteRepository.save(vote, menuId, userId), vote.id());
+        checkNotFoundWithId(save(vote, menuId, userId), vote.id());
     }
 
     public Vote merge(int menuId, int userId) {
         Menu menu = ValidationUtil.checkNotFoundWithId(menuRepository.get(menuId), "menu", menuId);
-        Vote userVote = voteRepository.getByDate(userId, menu.getDate());
-        checkUpdateTime(menuId, userVote==null);
-        return voteRepository.save(userVote==null?new Vote(menu, userRepository.get(userId)): userVote, menuId, userId);
+        Vote userVote = getByDate(userId, menu.getDate());
+        checkUpdateTime(menuId, userVote == null);
+        return save(userVote == null ? new Vote(menu, userRepository.get(userId)) : userVote, menuId, userId);
     }
 
     /**
      * Return vote by ID if it's users' vote
      */
     public Vote getById(int id, int userId) {
-        return checkNotFoundWithId(voteRepository.getById(id, userId), id);
+        return checkNotFoundWithId(crudRepository.findById(id)
+                .filter(vote -> vote.getUser().getId() == userId)
+                .orElse(null), id);
     }
 
     /**
      * Return vote by menu and user
      */
     public Vote get(int menuId, int userId) {
-        return checkNotFound(voteRepository.get(menuId, userId), String.format(FAILED_MSG, menuId, userId));
+        return checkNotFound(crudRepository.get(menuId, userId), String.format(FAILED_MSG, menuId, userId));
     }
 
     public void deleteForMenu(int menuId, int userId) {
-        checkNotFound(voteRepository.deleteForMenu(menuId, userId), String.format(FAILED_MSG, menuId, userId));
-    }
-
-    public void delete(int id) {
-        checkNotFoundWithId(voteRepository.delete(id), id);
+        checkNotFound(crudRepository.deleteForMenu(menuId, userId) != 0, String.format(FAILED_MSG, menuId, userId));
     }
 
     public void delete(int id, int userId) {
-        checkNotFoundWithId(voteRepository.delete(id, userId), id);
+        checkNotFoundWithId(crudRepository.delete(id, userId) != 0, id);
     }
 
     /**
@@ -119,7 +133,7 @@ public class VoteService {
      * ordered by descending vote time
      */
     public List<Vote> getAllForMenu(int menuId) {
-        return voteRepository.getAllForMenu(menuId);
+        return crudRepository.getAllForMenu(menuId);
     }
 
     /**
@@ -127,7 +141,7 @@ public class VoteService {
      * ordered by descending vote time
      */
     public List<Vote> getAllForUser(int userId) {
-        return voteRepository.getAllForUser(userId);
+        return crudRepository.getAllForUser(userId);
     }
 
     /**
@@ -135,6 +149,16 @@ public class VoteService {
      * with menu
      */
     public Vote getByDateForUser(int userId, LocalDate menuDate) {
-        return voteRepository.getByDate(userId, menuDate);
+        return getByDate(userId, menuDate);
+    }
+
+    public Vote getByDate(int userId, LocalDate menuDate) {
+        if (menuDate == null)
+            return null;
+        return crudRepository.getForUserByDate(userId, menuDate);
+    }
+
+    public boolean menuHasVotes(int menuId) {
+        return crudRepository.menuHasVotes(menuId)>0;
     }
 }

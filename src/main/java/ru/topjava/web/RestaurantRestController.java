@@ -27,6 +27,7 @@ import static ru.topjava.util.ValidationUtil.assureIdConsistent;
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestaurantRestController {
+
     static final String COMMON_URL = "/rest/restaurants";
     static final String ADMIN_URL = "/rest/admin/restaurants";
     private final Logger log = LoggerFactory.getLogger(RestaurantRestController.class);
@@ -100,7 +101,7 @@ public class RestaurantRestController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    /*
+    /**
      * Returns list of restaurants with menu
      * */
     @ApiOperation(value = "Get list of restaurants with menu for period")

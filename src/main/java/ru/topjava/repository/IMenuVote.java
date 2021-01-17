@@ -1,4 +1,4 @@
-package ru.topjava.repository.datajpa;
+package ru.topjava.repository;
 
 import ru.topjava.model.Menu;
 import ru.topjava.model.Vote;

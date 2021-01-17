@@ -18,7 +18,7 @@ public abstract class RepositoryService<T extends AbstractBaseEntity> {
     }
 
     public boolean delete(int id) {
-       return checkNotFoundWithId(repository.delete(id), id);
+        return checkNotFoundWithId(repository.delete(id) != 0, id);
     }
 
 }

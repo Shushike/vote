@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class VoteRestController {
+
     static final String REST_URL = "/rest/profile/votes";
     static final String PROFILE_URL = MenuRestController.PROFILE_URL;
     private final Logger log = LoggerFactory.getLogger(VoteRestController.class);

@@ -25,6 +25,7 @@ import static ru.topjava.util.ValidationUtil.*;
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class DishRestController {
+
     static final String COMMON_URL = "/rest/restaurants";
     static final String COMMON_REST_URL = COMMON_URL + "/{restaurantId}/dishes";
     static final String COMMON_MENU_URL = COMMON_URL + "/{restaurantId}/menus/{menuId}/dishes";

@@ -6,6 +6,7 @@ import ru.topjava.util.exception.InsufficientRightsException;
 import ru.topjava.util.exception.NotFoundException;
 
 public class ValidationUtil {
+
     private ValidationUtil() {
     }
 

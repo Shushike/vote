@@ -1,7 +1,5 @@
 package ru.topjava.service.datajpa;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.topjava.model.Dish;
 import ru.topjava.service.AbstractServiceTest;
@@ -17,7 +15,6 @@ import static ru.topjava.DishTestData.*;
 import static ru.topjava.RestaurantTestData.RESTAURANT1_ID;
 
 public class DishServiceTest extends AbstractServiceTest {
-    private static final Logger innerLog = LoggerFactory.getLogger(DishServiceTest.class);
 
     @Autowired
     protected DishService service;

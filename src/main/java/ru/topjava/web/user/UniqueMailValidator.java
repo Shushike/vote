@@ -1,20 +1,18 @@
 package ru.topjava.web.user;
 
-
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import ru.topjava.HasIdAndEmail;
 import ru.topjava.model.User;
-import ru.topjava.repository.UserRepository;
-
+import ru.topjava.repository.datajpa.CrudUserRepository;
 
 @Component
 public class UniqueMailValidator implements org.springframework.validation.Validator {
 
-    private final UserRepository repository;
+    private final CrudUserRepository repository;
 
-    public UniqueMailValidator(UserRepository repository) {
+    public UniqueMailValidator(CrudUserRepository repository) {
         this.repository = repository;
     }
 

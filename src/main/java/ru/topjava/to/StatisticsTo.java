@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class StatisticsTo implements Serializable {
+
     private static final long serialVersionUID = 3L;
     @ApiModelProperty(notes = "Date for which statistics are counted")
     private LocalDate menuDate;

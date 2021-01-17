@@ -1,11 +1,13 @@
 package ru.topjava.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.topjava.model.Dish;
 import ru.topjava.model.Menu;
-import ru.topjava.repository.DishRepository;
-import ru.topjava.repository.MenuRepository;
+import ru.topjava.repository.datajpa.CrudDishRepository;
+import ru.topjava.repository.datajpa.CrudMenuRepository;
+import ru.topjava.repository.datajpa.CrudRestaurantRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,32 +18,48 @@ import static ru.topjava.util.ValidationUtil.checkNotFoundWithId;
 @Service
 public class DishService extends RepositoryService<Dish> {
 
-    private final DishRepository dishRepository;
-    private final MenuRepository menuRepository;
+    private final CrudDishRepository crudRepository;
+    private final CrudRestaurantRepository restaurantRepository;
+    private final CrudMenuRepository menuRepository;
 
-    public DishService(DishRepository repository, MenuRepository menuRepository) {
-        super(repository);
-        this.dishRepository = repository;
+    public DishService(CrudDishRepository crudRepository, CrudRestaurantRepository restaurantRepository,
+                       CrudMenuRepository menuRepository) {
+        super(crudRepository);
+        this.crudRepository = crudRepository;
+        this.restaurantRepository = restaurantRepository;
         this.menuRepository = menuRepository;
     }
 
     public Dish create(Dish dish, int restaurantId) {
         Assert.notNull(dish, "Dish must not be null");
         checkNew(dish);
-        return dishRepository.save(dish, restaurantId);
+        return save(dish, restaurantId);
+    }
+
+    @Transactional
+    public Dish save(Dish dish, int restaurantId) {
+        if (!dish.isNew() && get(dish.getId(), restaurantId) == null) {
+            return null;
+        }
+        dish.setRestaurant(restaurantRepository.findEntityById(restaurantId));
+        return crudRepository.save(dish);
+    }
+
+    public boolean delete(int id, int restaurantId) {
+        return checkNotFoundWithId(crudRepository.delete(id, restaurantId) != 0, id);
     }
 
     public Dish get(int id, int restaurantId) {
-        return checkNotFoundWithId(dishRepository.get(id, restaurantId), id);
+        return checkNotFoundWithId(crudRepository.get(id, restaurantId), id);
     }
 
     public void update(Dish dish, int restaurantId) {
         Assert.notNull(dish, "Dish must not be null");
-        checkNotFoundWithId(dishRepository.save(dish, restaurantId), dish.id());
+        checkNotFoundWithId(save(dish, restaurantId), dish.id());
     }
 
     public List<Dish> getAll(int restaurantId) {
-        return dishRepository.getAll(restaurantId);
+        return crudRepository.getAll(restaurantId);
     }
 
     public List<Dish> getForMenu(int menuId, int restaurantId) {
@@ -52,11 +70,7 @@ public class DishService extends RepositoryService<Dish> {
         return new ArrayList<>(menu.getDishes());
     }
 
-    public boolean delete(int id, int restaurantId) {
-        return checkNotFoundWithId(dishRepository.delete(id, restaurantId), id);
-    }
-
     public List<Dish> getByName(int restaurantId, String name) {
-        return dishRepository.getByName(restaurantId, name);
+        return crudRepository.getByName(restaurantId, name == null ? "%" : name.toLowerCase());
     }
 }

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.topjava.View;
 import ru.topjava.model.Menu;
-import ru.topjava.repository.datajpa.IMenuVote;
-import ru.topjava.repository.datajpa.IVotesNumber;
+import ru.topjava.repository.IMenuVote;
+import ru.topjava.repository.IVotesNumber;
 import ru.topjava.service.MenuService;
 import ru.topjava.to.MenuTo;
 import ru.topjava.to.StatisticsTo;
@@ -35,6 +35,7 @@ import static ru.topjava.util.ValidationUtil.*;
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class MenuRestController {
+
     static final String COMMON_URL = "/rest/restaurants/{restaurantId}/menus";
     static final String ADMIN_URL = "/rest/admin/restaurants/{restaurantId}/menus";
     static final String MENU_URL = "/rest/menus";
@@ -131,7 +132,7 @@ public class MenuRestController {
         return service.getByDate(restaurantId, menuDate);
     }
 
-    /*
+    /**
      * Return list of menu for date or period with flag which shows was menu voted by current user or not
      * */
     @ApiOperation(value = "Get list of menu for date with vote flag",

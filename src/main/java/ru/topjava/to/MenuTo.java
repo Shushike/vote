@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class MenuTo extends BaseTo {
+
     @ApiModelProperty(notes = "Menu date")
     private LocalDate date;
     @ApiModelProperty(notes = "List of dishes for this date")
